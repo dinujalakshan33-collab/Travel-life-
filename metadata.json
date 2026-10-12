@@ -1,0 +1,6 @@
+{
+  "name": "GlobeTrek - World Travel & Itinerary Platform",
+  "description": "Discover unscripted destinations, explore verified field guides, compare budget archetypes, and engineer day-by-day itineraries with precision cartography.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
