@@ -182,7 +182,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(candidates, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "globetrek-cartography-schema.json");
+    downloadAnchor.setAttribute("download", "travel-life-cartography-schema.json");
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -245,7 +245,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
               </div>
               <div>
                 <span className="font-bold text-sm tracking-tight text-[#11382e] block">
-                  GlobeTrek
+                  Travel-Life
                 </span>
                 <span className="font-mono text-[9px] font-bold text-amber-700 tracking-wider block -mt-1">
                   CARTOGRAPHY OPS
@@ -257,7 +257,7 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
 
             <div className="hidden lg:flex items-center gap-2 text-xs">
               <span className="font-semibold text-stone-700">
-                GlobeTrek Admin Console &amp; Verification Portal
+                Travel-Life Admin Console &amp; Verification Portal
               </span>
               <span className="text-stone-400">—</span>
               <span className="font-mono text-[10px] bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold border border-red-200">

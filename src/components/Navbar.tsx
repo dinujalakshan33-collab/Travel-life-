@@ -47,10 +47,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="text-xl font-bold tracking-tight text-[#11382e] font-sans block leading-none">
-                GlobeTrek
+                Travel-Life
               </span>
               <span className="font-mono text-[9px] font-bold text-stone-500 tracking-wider block mt-0.5">
-                EXPLORE THE UNCHARTED
+                EXPLORE THE WORLD
               </span>
             </div>
           </button>

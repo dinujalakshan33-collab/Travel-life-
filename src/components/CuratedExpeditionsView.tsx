@@ -1000,7 +1000,7 @@ export const CuratedExpeditionsView: React.FC<CuratedExpeditionsViewProps> = ({
               Receive Curated Field Reports
             </h3>
             <p className="text-xs text-[#52645d] mt-1 leading-relaxed">
-              Subscribe to GlobeTrek journal and instantly unlock our 140-page Global Destination Compendium &amp; offline planning index.
+              Subscribe to Travel-Life journal and instantly unlock our 140-page Global Destination Compendium &amp; offline planning index.
             </p>
           </div>
 
@@ -1030,7 +1030,7 @@ export const CuratedExpeditionsView: React.FC<CuratedExpeditionsViewProps> = ({
                 <div className="w-7 h-7 rounded-full bg-[#114b3e] flex items-center justify-center text-white">
                   <Compass className="w-4 h-4 text-emerald-300" />
                 </div>
-                <span className="text-lg font-bold text-[#11382e]">GlobeTrek</span>
+                <span className="text-lg font-bold text-[#11382e]">Travel-Life</span>
               </div>
               <p className="text-xs text-[#52645d] leading-relaxed max-w-sm">
                 An authoritative digital cartography and slow-travel planning engine architected for thoughtful explorers worldwide.
@@ -1111,7 +1111,7 @@ export const CuratedExpeditionsView: React.FC<CuratedExpeditionsViewProps> = ({
 
           {/* Bottom Line */}
           <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-[#52645d]">
-            <p>© 2025 GlobeTrek Cartography Ltd. All rights reserved. Data refreshed dynamically from global open repositories.</p>
+            <p>© 2025 Travel-Life Cartography Ltd. All rights reserved. Data refreshed dynamically from global open repositories.</p>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1 font-mono text-[10px] text-emerald-800">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>

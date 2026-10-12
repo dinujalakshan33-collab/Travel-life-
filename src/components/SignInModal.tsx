@@ -40,7 +40,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => 
             <Compass className="w-6 h-6 text-emerald-300" />
           </div>
           <h3 className="editorial-title text-2xl font-bold text-[#11382e]">
-            GlobeTrek Explorer Account
+            Travel-Life Explorer Account
           </h3>
           <p className="text-xs text-stone-500 mt-1">
             Sign in to sync offline itineraries and access municipal field guides.
@@ -66,7 +66,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => 
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="field.explorer@globetrek.org"
+                  placeholder="field.explorer@travel-life.org"
                   className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#114b3e]"
                 />
               </div>
@@ -101,7 +101,7 @@ export const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => 
               <button 
                 type="button" 
                 onClick={() => {
-                  setEmail('explorer@globetrek.org');
+                  setEmail('explorer@travel-life.org');
                   setPassword('demo-pass-2025');
                 }}
                 className="text-[#114b3e] font-semibold underline"

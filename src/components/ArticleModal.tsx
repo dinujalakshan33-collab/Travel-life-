@@ -103,7 +103,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose }) 
           {/* Footer Actions */}
           <div className="pt-4 border-t border-[#ede8dc] flex items-center justify-between">
             <span className="text-xs text-stone-600 font-mono">
-              GlobeTrek Curated Field Dispatch #2025-08
+              Travel-Life Curated Field Dispatch #2025-08
             </span>
             <button
               onClick={onClose}

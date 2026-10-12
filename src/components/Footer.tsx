@@ -18,12 +18,12 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
                 <Compass className="w-4 h-4 text-emerald-300" />
               </div>
               <span className="text-xl font-bold tracking-tight text-[#11382e] font-sans">
-                GlobeTrek
+                Travel-Life
               </span>
             </div>
 
             <p className="text-xs text-[#52645d] leading-relaxed max-w-sm">
-              GlobeTrek empowers travelers with verified destination data, community itineraries, and real-time planning tools.
+              Travel-Life empowers travelers with verified destination data, community itineraries, and real-time planning tools.
             </p>
 
             <div className="flex items-center gap-3 pt-2 text-[#465b53]">
@@ -98,7 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
               DATA &amp; TRUST
             </h4>
             <ul className="space-y-2 text-xs text-[#465b53]">
-              <li><a href="#" className="hover:text-[#11382e] hover:underline">About GlobeTrek</a></li>
+              <li><a href="#" className="hover:text-[#11382e] hover:underline">About Travel-Life</a></li>
               <li><a href="#" className="hover:text-[#11382e] hover:underline">Verified Source Policy</a></li>
               <li><a href="#" className="hover:text-[#11382e] hover:underline">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-[#11382e] hover:underline">Terms of Service</a></li>
@@ -119,7 +119,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
         {/* Bottom copyright line */}
         <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-[#52645d]">
           <p>
-            © 2025 GlobeTrek Cartography Ltd. All rights reserved. Data refreshed dynamically from global open repositories.
+            © 2025 Travel-Life Cartography Ltd. All rights reserved. Data refreshed dynamically from global open repositories.
           </p>
 
           <div className="flex items-center gap-3">

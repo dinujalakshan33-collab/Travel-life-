@@ -96,7 +96,7 @@ export const TripPlannerView: React.FC<TripPlannerViewProps> = ({
   };
 
   const handleExportMarkdown = () => {
-    let md = `# GlobeTrek Engineered Itinerary\n\nGenerated on: ${new Date().toLocaleDateString()}\nTotal Estimated Cost: ${formatPrice(totalCostAll)}\n\n`;
+    let md = `# Travel-Life Engineered Itinerary\n\nGenerated on: ${new Date().toLocaleDateString()}\nTotal Estimated Cost: ${formatPrice(totalCostAll)}\n\n`;
     days.forEach(d => {
       md += `## Day ${d}\n`;
       items.filter(i => i.day === d).forEach(item => {
@@ -109,7 +109,7 @@ export const TripPlannerView: React.FC<TripPlannerViewProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `GlobeTrek_Itinerary_Day${selectedDay}.md`;
+    a.download = `Travel-Life_Itinerary_Day${selectedDay}.md`;
     a.click();
     URL.revokeObjectURL(url);
   };
