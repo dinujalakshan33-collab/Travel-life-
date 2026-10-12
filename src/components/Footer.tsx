@@ -58,10 +58,10 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab }) => {
               EXPLORE
             </h4>
             <ul className="space-y-2 text-xs text-[#465b53]">
-              <li><button onClick={() => onSelectTab('destinations')} className="hover:text-[#11382e] hover:underline cursor-pointer">Continents</button></li>
+              <li><button onClick={() => onSelectTab('destinations')} className="hover:text-[#11382e] hover:underline cursor-pointer">Worldwide Destinations</button></li>
+              <li><button onClick={() => onSelectTab('hotels')} className="hover:text-[#11382e] hover:underline cursor-pointer">Hotels &amp; Resorts</button></li>
+              <li><button onClick={() => onSelectTab('map')} className="hover:text-[#11382e] hover:underline cursor-pointer">Interactive World Map</button></li>
               <li><button onClick={() => onSelectTab('expeditions')} className="hover:text-[#11382e] hover:underline cursor-pointer">Curated Expeditions</button></li>
-              <li><button onClick={() => onSelectTab('destinations')} className="hover:text-[#11382e] hover:underline cursor-pointer">Hidden Gems</button></li>
-              <li><button onClick={() => onSelectTab('map')} className="hover:text-[#11382e] hover:underline cursor-pointer">World Map</button></li>
             </ul>
           </div>
 

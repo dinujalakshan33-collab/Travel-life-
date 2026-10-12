@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Compass, Search, Bookmark, User, Menu, X, Globe, ArrowRight, ChevronDown, Bell, Shield } from 'lucide-react';
+import { Compass, Search, Bookmark, User, Menu, X, Globe, ArrowRight, ChevronDown, Bell, Shield, BedDouble } from 'lucide-react';
 import { Currency } from '../types/travel';
 
 interface NavbarProps {
@@ -66,7 +66,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span>Destinations</span>
-              <ChevronDown className="w-3 h-3 opacity-70" />
+            </button>
+
+            <button
+              onClick={() => onSelectTab('hotels')}
+              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer text-xs font-semibold flex items-center gap-1.5 ${
+                currentTab === 'hotels'
+                  ? 'bg-[#103e33] text-white shadow-xs'
+                  : 'text-[#384a43] hover:text-[#11382e] hover:bg-[#ede9dc]'
+              }`}
+            >
+              <BedDouble className="w-3.5 h-3.5 text-amber-600" />
+              <span>Hotels &amp; Stays</span>
             </button>
 
             <button
@@ -283,6 +294,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               Destinations (Home Hub)
+            </button>
+            <button
+              onClick={() => { onSelectTab('hotels'); setMobileMenuOpen(false); }}
+              className={`text-left px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${
+                currentTab === 'hotels' ? 'bg-[#114b3e] text-white font-semibold' : 'text-[#384a43]'
+              }`}
+            >
+              <BedDouble className="w-4 h-4 text-amber-600" />
+              <span>Hotels &amp; Stays</span>
             </button>
             <button
               onClick={() => { onSelectTab('expeditions'); setMobileMenuOpen(false); }}

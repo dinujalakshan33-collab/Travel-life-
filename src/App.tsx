@@ -4,12 +4,14 @@ import { Hero } from './components/Hero';
 import { ContinentGrid } from './components/ContinentGrid';
 import { FeaturedDestinations } from './components/FeaturedDestinations';
 import { BudgetArchetypes } from './components/BudgetArchetypes';
-import { PlatformInstruments } from './components/PlatformInstruments';
 import { EditorDispatches } from './components/EditorDispatches';
 import { StatsBanner } from './components/StatsBanner';
 import { Newsletter } from './components/Newsletter';
 import { Footer } from './components/Footer';
 import { DestinationModal } from './components/DestinationModal';
+import { HotelDetailModal } from './components/HotelDetailModal';
+import { HotelsShowcase } from './components/HotelsShowcase';
+import { InteractiveWorldMap } from './components/InteractiveWorldMap';
 import { ArticleModal } from './components/ArticleModal';
 import { MapExplorerView } from './components/MapExplorerView';
 import { TripPlannerView } from './components/TripPlannerView';
@@ -18,13 +20,13 @@ import { AdminConsoleView } from './components/AdminConsoleView';
 import { AdminLoginView } from './components/AdminLoginView';
 import { SavedDrawer } from './components/SavedDrawer';
 import { SignInModal } from './components/SignInModal';
-import { DESTINATIONS, INITIAL_ITINERARY_ITEMS, EDITORIAL_ARTICLES } from './data/travelData';
-import { Destination, Currency, EditorialArticle, ItineraryItem, MapPoi } from './types/travel';
-import { LayoutGrid, Layers, Shield, Compass, Sparkles, Lock } from 'lucide-react';
+import { DESTINATIONS, HOTELS, INITIAL_ITINERARY_ITEMS, EDITORIAL_ARTICLES } from './data/travelData';
+import { Destination, HotelStay, Currency, EditorialArticle, ItineraryItem, MapPoi } from './types/travel';
+import { LayoutGrid, Layers, Shield, Compass, Sparkles, Lock, BedDouble, Globe2, ArrowRight } from 'lucide-react';
 import { authApi, AuthUser } from './services/authApi';
 
 export default function App() {
-  // Navigation & Screen view state: 'destinations' (Screen 1) | 'expeditions' (Screen 2) | 'admin' (Screen 3) | 'map' | 'planner'
+  // Navigation & Screen view state: 'destinations' | 'hotels' | 'expeditions' | 'admin' | 'map' | 'planner'
   const [currentTab, setCurrentTab] = useState<string>('destinations');
   const [currency, setCurrency] = useState<Currency>('USD');
   
@@ -46,6 +48,7 @@ export default function App() {
 
   // Modals
   const [activeDestination, setActiveDestination] = useState<Destination | null>(null);
+  const [activeHotel, setActiveHotel] = useState<HotelStay | null>(null);
   const [activeArticle, setActiveArticle] = useState<EditorialArticle | null>(null);
   const [signInOpen, setSignInOpen] = useState(false);
 
@@ -119,7 +122,9 @@ export default function App() {
       const q = searchQuery.toLowerCase();
       const match = dest.name.toLowerCase().includes(q) ||
                     dest.country.toLowerCase().includes(q) ||
-                    dest.description.toLowerCase().includes(q);
+                    dest.city.toLowerCase().includes(q) ||
+                    dest.description.toLowerCase().includes(q) ||
+                    dest.activities?.some(a => a.toLowerCase().includes(q));
       if (!match) return false;
     }
 
@@ -144,6 +149,16 @@ export default function App() {
 
   const handleContinentSelect = (continentName: string) => {
     setSelectedRegion(continentName);
+    setSearchQuery('');
+    const element = document.getElementById('featured-destinations');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleCountrySelect = (countryName: string) => {
+    setSearchQuery(countryName);
+    setSelectedRegion('all');
     const element = document.getElementById('featured-destinations');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -151,7 +166,10 @@ export default function App() {
   };
 
   const handleQuickSelect = (destName: string) => {
-    const found = DESTINATIONS.find(d => d.name.toLowerCase().includes(destName.toLowerCase().split(',')[0]));
+    const found = DESTINATIONS.find(d => 
+      d.name.toLowerCase().includes(destName.toLowerCase().split(',')[0]) ||
+      d.country.toLowerCase().includes(destName.toLowerCase())
+    );
     if (found) {
       setActiveDestination(found);
     } else {
@@ -169,17 +187,12 @@ export default function App() {
 
   const savedDestinationsList = DESTINATIONS.filter(d => savedIds.includes(d.id));
 
-  // Quick Screen Switcher Banner (Floating at top-right for instantaneous testing of all 3 screens)
+  // Quick Screen Switcher Dock
   const ScreenSwitcherDock = () => (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#11382e]/95 backdrop-blur-md text-white px-3 py-2 rounded-2xl shadow-2xl border border-emerald-500/30 flex items-center gap-1 text-xs">
-      <span className="font-mono text-[10px] text-emerald-300 font-bold px-2 uppercase flex items-center gap-1">
-        <Sparkles className="w-3.5 h-3.5" />
-        Screens:
-      </span>
-
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#11382e]/95 backdrop-blur-md text-white px-3 py-2 rounded-2xl shadow-2xl border border-emerald-500/30 flex items-center gap-1 text-xs max-w-[95vw] overflow-x-auto">
       <button
         onClick={() => setCurrentTab('destinations')}
-        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium ${
+        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium whitespace-nowrap ${
           currentTab === 'destinations' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
         }`}
       >
@@ -188,23 +201,43 @@ export default function App() {
       </button>
 
       <button
+        onClick={() => setCurrentTab('hotels')}
+        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium whitespace-nowrap ${
+          currentTab === 'hotels' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
+        }`}
+      >
+        <BedDouble className="w-3.5 h-3.5 text-amber-300" />
+        <span>2. Hotels &amp; Stays</span>
+      </button>
+
+      <button
+        onClick={() => setCurrentTab('map')}
+        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium whitespace-nowrap ${
+          currentTab === 'map' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
+        }`}
+      >
+        <Globe2 className="w-3.5 h-3.5 text-emerald-300" />
+        <span>3. Interactive Map</span>
+      </button>
+
+      <button
         onClick={() => setCurrentTab('expeditions')}
-        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium ${
+        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium whitespace-nowrap ${
           currentTab === 'expeditions' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
         }`}
       >
         <Layers className="w-3.5 h-3.5" />
-        <span>2. Curated Expeditions</span>
+        <span>4. Curated Expeditions</span>
       </button>
 
       <button
         onClick={() => setCurrentTab('admin')}
-        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium ${
+        className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium whitespace-nowrap ${
           currentTab === 'admin' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
         }`}
       >
         <Lock className={`w-3.5 h-3.5 ${isAdminAuthenticated ? 'text-emerald-400' : 'text-amber-300'}`} />
-        <span>{isAdminAuthenticated ? '3. Admin Ops (Active)' : '3. Admin Login'}</span>
+        <span>{isAdminAuthenticated ? 'Admin Ops' : 'Admin Login'}</span>
       </button>
     </div>
   );
@@ -291,6 +324,75 @@ export default function App() {
     );
   }
 
+  // Dedicated Hotels & Stays View
+  if (currentTab === 'hotels') {
+    return (
+      <div className="min-h-screen bg-[#fbfaf6] flex flex-col pb-16">
+        <Navbar
+          currentTab={currentTab}
+          onSelectTab={setCurrentTab}
+          currency={currency}
+          onChangeCurrency={setCurrency}
+          savedCount={savedIds.length}
+          onOpenSaved={() => setSavedDrawerOpen(true)}
+          onOpenSearch={() => {
+            const el = document.getElementById('hero-search');
+            el?.scrollIntoView({ behavior: 'smooth' });
+          }}
+          onOpenSignIn={() => setSignInOpen(true)}
+          onStartPlanning={() => setCurrentTab('planner')}
+        />
+
+        <main className="flex-1">
+          <HotelsShowcase
+            hotels={HOTELS}
+            currency={currency}
+            savedIds={savedIds}
+            onToggleSave={toggleSave}
+            onSelectHotel={setActiveHotel}
+          />
+          <Newsletter />
+        </main>
+
+        <Footer onSelectTab={setCurrentTab} />
+
+        <HotelDetailModal
+          hotel={activeHotel}
+          onClose={() => setActiveHotel(null)}
+          currency={currency}
+          isSaved={activeHotel ? savedIds.includes(activeHotel.id) : false}
+          onToggleSave={toggleSave}
+        />
+
+        <DestinationModal
+          destination={activeDestination}
+          onClose={() => setActiveDestination(null)}
+          isSaved={activeDestination ? savedIds.includes(activeDestination.id) : false}
+          onToggleSave={toggleSave}
+          onAddToPlanner={handleAddToPlanner}
+          currency={currency}
+          onSelectHotel={setActiveHotel}
+        />
+
+        <SavedDrawer
+          isOpen={savedDrawerOpen}
+          onClose={() => setSavedDrawerOpen(false)}
+          savedDestinations={savedDestinationsList}
+          onRemove={toggleSave}
+          onSelect={setActiveDestination}
+          currency={currency}
+          onStartPlanning={() => {
+            setSavedDrawerOpen(false);
+            setCurrentTab('planner');
+          }}
+        />
+
+        <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
+        <ScreenSwitcherDock />
+      </div>
+    );
+  }
+
   // Interactive Map View
   if (currentTab === 'map') {
     return (
@@ -299,7 +401,43 @@ export default function App() {
           onBack={() => setCurrentTab('destinations')}
           onAddToPlanner={handleAddPoiToPlanner}
           currency={currency}
+          onSelectDestinationModal={setActiveDestination}
+          onSelectHotelModal={setActiveHotel}
+          savedIds={savedIds}
+          onToggleSave={toggleSave}
         />
+
+        <DestinationModal
+          destination={activeDestination}
+          onClose={() => setActiveDestination(null)}
+          isSaved={activeDestination ? savedIds.includes(activeDestination.id) : false}
+          onToggleSave={toggleSave}
+          onAddToPlanner={handleAddToPlanner}
+          currency={currency}
+          onSelectHotel={setActiveHotel}
+        />
+
+        <HotelDetailModal
+          hotel={activeHotel}
+          onClose={() => setActiveHotel(null)}
+          currency={currency}
+          isSaved={activeHotel ? savedIds.includes(activeHotel.id) : false}
+          onToggleSave={toggleSave}
+        />
+
+        <SavedDrawer
+          isOpen={savedDrawerOpen}
+          onClose={() => setSavedDrawerOpen(false)}
+          savedDestinations={savedDestinationsList}
+          onRemove={toggleSave}
+          onSelect={setActiveDestination}
+          currency={currency}
+          onStartPlanning={() => {
+            setSavedDrawerOpen(false);
+            setCurrentTab('planner');
+          }}
+        />
+
         <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
         <ScreenSwitcherDock />
       </div>
@@ -360,11 +498,15 @@ export default function App() {
               el?.scrollIntoView({ behavior: 'smooth' });
             }}
             onQuickSelect={handleQuickSelect}
+            onOpenMap={() => setCurrentTab('map')}
           />
         </div>
 
         {/* Regional Field Guides / Explore by Continent */}
-        <ContinentGrid onSelectContinent={handleContinentSelect} />
+        <ContinentGrid 
+          onSelectContinent={handleContinentSelect} 
+          onSelectCountry={handleCountrySelect}
+        />
 
         {/* Curated Global Highlights / Featured Destinations */}
         <div id="featured-destinations">
@@ -377,17 +519,58 @@ export default function App() {
           />
         </div>
 
+        {/* Interactive World Map Section (Leaflet + OpenStreetMap) */}
+        <section id="world-map-preview" className="py-16 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto border-t border-[#ded8c7]">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-800 uppercase tracking-widest mb-1">
+                <Globe2 className="w-4 h-4 text-emerald-700" />
+                <span>OpenStreetMap Interactive Cartography</span>
+              </div>
+              <h2 className="editorial-title text-3xl sm:text-4xl font-bold text-[#11382e] tracking-tight">
+                Worldwide Interactive Travel Map
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+                Explore verified destinations and hand-selected luxury stays across 195+ countries with live GPS coordinates, satellite zoom, and instant route planning.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setCurrentTab('map')}
+              className="px-4 py-2.5 bg-[#11382e] hover:bg-[#0c2f27] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-2 self-start md:self-auto"
+            >
+              <span>Full Screen Map</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <InteractiveWorldMap
+            destinations={DESTINATIONS}
+            hotels={HOTELS}
+            onSelectDestination={setActiveDestination}
+            onSelectHotel={setActiveHotel}
+            savedIds={savedIds}
+            onToggleSave={toggleSave}
+            currency={currency}
+            onAddToPlanner={handleAddToPlanner}
+          />
+        </section>
+
+        {/* Worldwide Hotels & Stays Showcase */}
+        <div id="hotels-showcase">
+          <HotelsShowcase
+            hotels={HOTELS}
+            currency={currency}
+            savedIds={savedIds}
+            onToggleSave={toggleSave}
+            onSelectHotel={setActiveHotel}
+          />
+        </div>
+
         {/* Empirical Field Economics / Smart Budget Archetypes */}
         <BudgetArchetypes
           currency={currency}
           onSelectArchetypeItinerary={handleArchetypeSelect}
-        />
-
-        {/* Integrated Platform Instruments (Interactive OSM Mini + Trip Architect Mini) */}
-        <PlatformInstruments
-          onOpenMap={() => setCurrentTab('expeditions')}
-          onOpenPlanner={() => setCurrentTab('planner')}
-          currency={currency}
         />
 
         {/* Curated Dispatches / Editor's Picks */}
@@ -416,6 +599,15 @@ export default function App() {
         onToggleSave={toggleSave}
         onAddToPlanner={handleAddToPlanner}
         currency={currency}
+        onSelectHotel={setActiveHotel}
+      />
+
+      <HotelDetailModal
+        hotel={activeHotel}
+        onClose={() => setActiveHotel(null)}
+        currency={currency}
+        isSaved={activeHotel ? savedIds.includes(activeHotel.id) : false}
+        onToggleSave={toggleSave}
       />
 
       <ArticleModal

@@ -1,595 +1,1178 @@
-import { Destination, ContinentSector, BudgetArchetype, EditorialArticle, MapPoi, ItineraryItem } from '../types/travel';
+import { 
+  Destination, 
+  HotelStay, 
+  PopularCountry, 
+  ContinentSector, 
+  BudgetArchetype, 
+  EditorialArticle, 
+  MapPoi, 
+  ItineraryItem 
+} from '../types/travel';
+
+export const POPULAR_COUNTRIES: PopularCountry[] = [
+  {
+    id: 'sri-lanka',
+    name: 'Sri Lanka',
+    code: 'LK',
+    region: 'Asia',
+    tagline: 'Emerald tea hills, ancient rock fortresses & golden whale-watching shores',
+    destinationCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'japan',
+    name: 'Japan',
+    code: 'JP',
+    region: 'Asia',
+    tagline: 'Zen bamboo groves, alpine onsens & neon gastronomy hubs',
+    destinationCount: 8,
+    imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'italy',
+    name: 'Italy',
+    code: 'IT',
+    region: 'Europe',
+    tagline: 'Sun-drenched cliffside villages, Renaissance frescoes & culinary heritage',
+    destinationCount: 9,
+    imageUrl: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'switzerland',
+    name: 'Switzerland',
+    code: 'CH',
+    region: 'Europe',
+    tagline: 'Glacial Matterhorn pinnacles, cogwheel railways & emerald valleys',
+    destinationCount: 5,
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'maldives',
+    name: 'Maldives',
+    code: 'MV',
+    region: 'Asia',
+    tagline: 'UNESCO coral atolls, overwater villas & luminescent turquoise lagoons',
+    destinationCount: 4,
+    imageUrl: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'thailand',
+    name: 'Thailand',
+    code: 'TH',
+    region: 'Asia',
+    tagline: 'Karst sea towers, gilded Buddhist wats & vibrant floating markets',
+    destinationCount: 7,
+    imageUrl: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'greece',
+    name: 'Greece',
+    code: 'GR',
+    region: 'Europe',
+    tagline: 'White-washed Aegean calderas, ancient temples & sapphire bays',
+    destinationCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'france',
+    name: 'France',
+    code: 'FR',
+    region: 'Europe',
+    tagline: 'Gothic cathedrals, Côte d’Azur coastal corniche & haute cuisine',
+    destinationCount: 7,
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'united-states',
+    name: 'United States',
+    code: 'US',
+    region: 'Americas',
+    tagline: 'Canyon abysses, geothermal geysers & Pacific volcanic coastlines',
+    destinationCount: 11,
+    imageUrl: 'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'kenya',
+    name: 'Kenya',
+    code: 'KE',
+    region: 'Africa',
+    tagline: 'The Great Migration savannahs, acacia sunrises & Maasai heritage',
+    destinationCount: 4,
+    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'egypt',
+    name: 'Egypt',
+    code: 'EG',
+    region: 'Middle East',
+    tagline: 'Pharaonic monuments, Giza pyramid complexes & timeless Nile feluccas',
+    destinationCount: 5,
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'turkey',
+    name: 'Turkey',
+    code: 'TR',
+    region: 'Middle East',
+    tagline: 'Volcanic fairy chimney skies, Bosphorus straits & Byzantine mosaics',
+    destinationCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'indonesia',
+    name: 'Indonesia',
+    code: 'ID',
+    region: 'Asia',
+    tagline: 'Volcanic caldera lakes, Hindu water temples & Komodo dragon isles',
+    destinationCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'australia',
+    name: 'Australia',
+    code: 'AU',
+    region: 'Oceania',
+    tagline: 'Living coral reefs, iconic Opera sails & red earth gorges',
+    destinationCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'new-zealand',
+    name: 'New Zealand',
+    code: 'NZ',
+    region: 'Oceania',
+    tagline: 'Glacial fiords, alpine adventure capitals & pristine subtropical sounds',
+    destinationCount: 5,
+    imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80'
+  }
+];
+
+export const DESTINATIONS: Destination[] = [
+  // --- SRI LANKA ---
+  {
+    id: 'sigiriya',
+    name: 'Sigiriya Ancient Rock Fortress',
+    country: 'Sri Lanka',
+    countryCode: 'LK',
+    city: 'Central Province',
+    region: 'Asia',
+    category: 'Historic Landmarks',
+    rating: 4.95,
+    reviewsCount: '2,840 verified reviews',
+    description: 'A dramatic 200-meter monolith rising from the tropical forest canopy crowned by King Kashyapa’s 5th-century citadel, world-famous fresco maidens, and mirror wall inscriptions.',
+    longDescription: 'Sigiriya stands as an engineering miracle of the ancient world. Rising sheer from the dry zone jungle plain, the fortress was designed with intricate water gardens, subterranean hydraulics, wind-draft cooling channels, and massive lion paws framing the staircase to the summit.',
+    bestSeason: 'December – April',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 65,
+    imageUrl: 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Sunrise Fortress Ascent', 'Pidurangala Panoramic Hike', 'Water Garden Architecture Walk', 'Minneriya Elephant Safari'],
+    coordinates: { lat: 7.9570, lng: 80.7603 },
+    highlights: ['5th Century Lion Rock Palace', 'Ancient Frescoes & Mirror Wall', 'Pidurangala Sunset Viewpoint'],
+    recommendedStayDays: 2,
+    featured: true,
+    trending: true
+  },
+  {
+    id: 'ella-rock',
+    name: 'Ella & Nine Arch Bridge',
+    country: 'Sri Lanka',
+    countryCode: 'LK',
+    city: 'Badulla District',
+    region: 'Asia',
+    category: 'Adventure & Hiking',
+    rating: 4.92,
+    reviewsCount: '1,930 verified reviews',
+    description: 'High-altitude Ceylon tea estates, mist-shrouded mountain gaps, cascading Ravana waterfalls, and the iconic colonial viaduct constructed entirely of stone and brick without steel.',
+    bestSeason: 'January – May',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 45,
+    imageUrl: 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Scenic Kandy-Ella Blue Train Ride', 'Nine Arch Bridge Train Spotting', 'Little Adam’s Peak Sunrise Trek', 'Ceylon Tea Factory Tasting'],
+    coordinates: { lat: 6.8722, lng: 81.0464 },
+    highlights: ['Iconic Demodara Viaduct', 'Emerald Tea Terraces', 'Ravana Falls Natural Pools'],
+    recommendedStayDays: 3,
+    featured: true
+  },
+  {
+    id: 'mirissa-beach',
+    name: 'Mirissa Coastal Bay & Secret Beach',
+    country: 'Sri Lanka',
+    countryCode: 'LK',
+    city: 'Southern Province',
+    region: 'Asia',
+    category: 'Coastal & Beaches',
+    rating: 4.88,
+    reviewsCount: '1,420 verified reviews',
+    description: 'Crescent-shaped golden sand beaches fringed with coconut palms, vibrant surf breaks, calm snorkeling coves with sea turtles, and prime access to Indian Ocean blue whale migration channels.',
+    bestSeason: 'November – April',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 50,
+    imageUrl: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Blue Whale & Dolphin Watching', 'Coconut Tree Hill Sunset Photography', 'Secret Beach Snorkeling', 'Surf Lessons at Weligama Bay'],
+    coordinates: { lat: 5.9483, lng: 80.4716 },
+    highlights: ['Coconut Tree Hill', 'Indian Ocean Whale Migration', 'Protected Turtle Reef Coves'],
+    recommendedStayDays: 3,
+    trending: true
+  },
+
+  // --- JAPAN ---
+  {
+    id: 'kyoto',
+    name: 'Kyoto Imperial Shrines & Bamboo Groves',
+    country: 'Japan',
+    countryCode: 'JP',
+    city: 'Kansai Region',
+    region: 'Asia',
+    category: 'Historic Landmarks',
+    rating: 4.96,
+    reviewsCount: '4,120 verified reviews',
+    description: 'The ancient cultural capital of Japan with over 1,600 Buddhist temples, 400 Shinto shrines, meditative stone gardens, tea ceremony pavilions, and traditional preserved machiya townhouses.',
+    bestSeason: 'March – May & October – November',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 130,
+    imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Fushimi Inari 10,000 Torii Hike', 'Arashiyama Bamboo Grove Walk', 'Uji Ceremonial Matcha Whisking', 'Gion Evening Geisha Walking Tour'],
+    coordinates: { lat: 34.9858, lng: 135.7588 },
+    highlights: ['Kinkaku-ji Golden Pavilion', 'Fushimi Inari Senbon Torii', 'Gion Historic District'],
+    recommendedStayDays: 4,
+    featured: true,
+    trending: true
+  },
+  {
+    id: 'mount-fuji',
+    name: 'Mount Fuji & Lake Kawaguchiko',
+    country: 'Japan',
+    countryCode: 'JP',
+    city: 'Yamanashi Prefecture',
+    region: 'Asia',
+    category: 'Natural Wonders',
+    rating: 4.94,
+    reviewsCount: '3,100 verified reviews',
+    description: 'The iconic 3,776-meter volcanic cone reflecting across the pristine Fuji Five Lakes, framed by traditional red pagodas, weeping cherry blossoms, and natural mineral onsens.',
+    bestSeason: 'July – September (Climbing) / Nov – Feb (Clear Views)',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 140,
+    imageUrl: 'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1528164344705-475426879c0d?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Chureito Pagoda Sunrise', 'Fuji Five Lakes Cycling', 'Traditional Ryokan Onsen Soak', 'Mount Fuji Yoshida Trail Climb'],
+    coordinates: { lat: 35.3606, lng: 138.7274 },
+    highlights: ['UNESCO Sacred Mountain', 'Chureito Pagoda Vista', 'Lake Kawaguchiko Reflection'],
+    recommendedStayDays: 2
+  },
+
+  // --- ITALY ---
+  {
+    id: 'amalfi-coast',
+    name: 'Amalfi Coast & Positano',
+    country: 'Italy',
+    countryCode: 'IT',
+    city: 'Campania Region',
+    region: 'Europe',
+    category: 'Coastal & Beaches',
+    rating: 4.93,
+    reviewsCount: '3,850 verified reviews',
+    description: 'Pastel-hued cliffside villages cascading into the Tyrrhenian Sea, fragrant lemon groves, the historic Path of the Gods hiking trail, and legendary coastal Italian hospitality.',
+    bestSeason: 'May – June & September – October',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 240,
+    imageUrl: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Path of the Gods Clifftop Trek', 'Capri Private Wooden Gozzo Cruise', 'Limoncello Tasting in Ravello', 'Amalfi Cathedral Byzantine Walk'],
+    coordinates: { lat: 40.6340, lng: 14.6027 },
+    highlights: ['Positano Cliffside Houses', 'Path of the Gods Ridge', 'Ravana Villa Rufolo Gardens'],
+    recommendedStayDays: 4,
+    featured: true,
+    trending: true
+  },
+  {
+    id: 'dolomites',
+    name: 'Dolomites Alpine Val Gardena',
+    country: 'Italy',
+    countryCode: 'IT',
+    city: 'South Tyrol',
+    region: 'Europe',
+    category: 'Natural Wonders',
+    rating: 4.97,
+    reviewsCount: '2,920 verified reviews',
+    description: 'Dramatic limestone needles, high alpine meadows of Alpe di Siusi, turquoise glacial lakes of Lago di Braies, and authentic Ladin mountain rifugios.',
+    bestSeason: 'June – September (Hiking) / Dec – March (Skiing)',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 160,
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Tre Cime di Lavaredo Loop', 'Seceda Ridgeline Photography', 'Lago di Braies Wooden Rowboating', 'High Alpine Hut-to-Hut Dining'],
+    coordinates: { lat: 46.5734, lng: 11.6742 },
+    highlights: ['Seceda Pinnacle Ridge', 'Tre Cime di Lavaredo', 'Alpe di Siusi Meadow'],
+    recommendedStayDays: 4,
+    featured: true
+  },
+
+  // --- SWITZERLAND ---
+  {
+    id: 'zermatt-matterhorn',
+    name: 'Zermatt & The Matterhorn',
+    country: 'Switzerland',
+    countryCode: 'CH',
+    city: 'Valais Canton',
+    region: 'Europe',
+    category: 'Adventure & Hiking',
+    rating: 4.98,
+    reviewsCount: '3,410 verified reviews',
+    description: 'The car-free alpine sanctuary crowned by the legendary 4,478-meter Matterhorn pyramid, serviced by the world’s highest 3S cableway and the Gornergrat cogwheel railway.',
+    bestSeason: 'June – September & December – April',
+    budgetTier: '$$$$ Ultra-Luxury',
+    dailyCostUSD: 310,
+    imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1527668752968-14dc70a27c95?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Gornergrat Panoramic Cogwheel Ride', 'Matterhorn Glacier Paradise 3,883m', '5-Lakes Alpine Walk (Riffelsee Reflection)', 'Traditional Swiss Cheese Fondue Dinner'],
+    coordinates: { lat: 45.9765, lng: 7.7491 },
+    highlights: ['4,478m Matterhorn Peak', 'Car-Free Alpine Village', 'Gornergrat Glacier Vista'],
+    recommendedStayDays: 3,
+    featured: true
+  },
+  {
+    id: 'lauterbrunnen',
+    name: 'Lauterbrunnen Valley of 72 Waterfalls',
+    country: 'Switzerland',
+    countryCode: 'CH',
+    city: 'Bernese Oberland',
+    region: 'Europe',
+    category: 'Natural Wonders',
+    rating: 4.96,
+    reviewsCount: '2,640 verified reviews',
+    description: 'A deep glacial U-shaped valley bordered by vertical 300-meter cliffs where 72 waterfalls plunge into alpine pastures, the direct real-world inspiration for Tolkien’s Rivendell.',
+    bestSeason: 'May – October',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 230,
+    imageUrl: 'https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1517824806704-9040b037703b?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Staubbach Falls Cliff Base Walk', 'Trümmelbach Underground Glacial Chutes', 'Wengen Mountain Railway to Männlichen', 'Jungfraujoch Top of Europe Day Trip'],
+    coordinates: { lat: 46.5935, lng: 7.9090 },
+    highlights: ['Staubbach 300m Freefall Waterfall', 'Rivendell Inspiration Valley', 'Eiger & Jungfrau Panoramic Wall'],
+    recommendedStayDays: 3
+  },
+
+  // --- MALDIVES ---
+  {
+    id: 'baa-atoll',
+    name: 'Baa Atoll UNESCO Biosphere',
+    country: 'Maldives',
+    countryCode: 'MV',
+    city: 'Baa Atoll',
+    region: 'Asia',
+    category: 'Coastal & Beaches',
+    rating: 4.99,
+    reviewsCount: '1,890 verified reviews',
+    description: 'An immaculate marine protected area home to Hanifaru Bay, where dozens of giant manta rays and whale sharks gather in nutrient-rich plankton blooms over crystalline coral reefs.',
+    bestSeason: 'November – April (Dry) / June – Nov (Manta Aggregations)',
+    budgetTier: '$$$$ Ultra-Luxury',
+    dailyCostUSD: 420,
+    imageUrl: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Hanifaru Bay Manta Snorkeling', 'Overwater Bungalow Sunrise Yoga', 'House Reef Bioluminescent Night Dive', 'Castaway Sandbank Private Picnic'],
+    coordinates: { lat: 5.1437, lng: 73.0784 },
+    highlights: ['UNESCO Hanifaru Bay Manta Aggregations', 'Pristine Live Coral Formations', 'Luminescent Plankton Beaches'],
+    recommendedStayDays: 5,
+    featured: true,
+    trending: true
+  },
+
+  // --- THAILAND ---
+  {
+    id: 'krabi-railay',
+    name: 'Krabi Railay Peninsula & Phi Phi Islands',
+    country: 'Thailand',
+    countryCode: 'TH',
+    city: 'Andaman Coast',
+    region: 'Asia',
+    category: 'Coastal & Beaches',
+    rating: 4.89,
+    reviewsCount: '3,210 verified reviews',
+    description: 'A secluded tropical peninsula accessible only by longtail boat, framed by towering karst limestone walls, hidden turquoise lagoons, and the crystal waters of the Andaman Sea.',
+    bestSeason: 'November – April',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 55,
+    imageUrl: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Deep Water Soloing & Rock Climbing', 'Hong Island Longtail Boat Excursion', 'Phra Nang Cave Beach Sunset', 'Bioluminescent Plankton Night Swim'],
+    coordinates: { lat: 8.0119, lng: 98.8398 },
+    highlights: ['Phra Nang Princess Cave Beach', 'Sheer 200m Limestone Cliffs', 'Longtail Island Hopping'],
+    recommendedStayDays: 4
+  },
+  {
+    id: 'chiang-mai',
+    name: 'Chiang Mai Old City & Ethical Sanctuaries',
+    country: 'Thailand',
+    countryCode: 'TH',
+    city: 'Northern Thailand',
+    region: 'Asia',
+    category: 'Cities & Culture',
+    rating: 4.91,
+    reviewsCount: '2,980 verified reviews',
+    description: 'The historic capital of the ancient Lanna Kingdom enclosed by brick moats, featuring gilded mountain wats at Doi Suthep, artisanal night markets, and ethical elephant rescue sanctuaries.',
+    bestSeason: 'November – February',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 40,
+    imageUrl: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Wat Phra That Doi Suthep Sunrise', 'Ethical Elephant Nature Park Visit', 'Authentic Khao Soi Noodle Tasting', 'Saturday Night Walking Street Market'],
+    coordinates: { lat: 18.7883, lng: 98.9853 },
+    highlights: ['Wat Phra That Doi Suthep', 'Lanna Heritage Moated City', 'Elephant Rescue Sanctuaries'],
+    recommendedStayDays: 3
+  },
+
+  // --- GREECE ---
+  {
+    id: 'santorini-caldera',
+    name: 'Santorini Oia & Volcanic Caldera',
+    country: 'Greece',
+    countryCode: 'GR',
+    city: 'Cyclades Islands',
+    region: 'Europe',
+    category: 'Coastal & Beaches',
+    rating: 4.94,
+    reviewsCount: '4,450 verified reviews',
+    description: 'Iconic white-washed cave dwellings with cobalt blue domes carved directly into sheer volcanic caldera cliffs, overlooking the Aegean Sea and world-famous golden sunsets.',
+    bestSeason: 'April – June & September – October',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 220,
+    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1000&q=80',
+      'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Fira to Oia 10km Caldera Rim Trek', 'Volcano & Hot Springs Catamaran Cruise', 'Akrotiri Bronze Age Ruins Tour', 'Assyrtiko Wine Tasting on Cliff Terraces'],
+    coordinates: { lat: 36.4618, lng: 25.3753 },
+    highlights: ['Oia Windmill Sunset Vista', 'Ancient Thera & Akrotiri Excavation', 'Volcanic Red & Black Sand Beaches'],
+    recommendedStayDays: 3,
+    featured: true,
+    trending: true
+  },
+
+  // --- FRANCE ---
+  {
+    id: 'paris-historic',
+    name: 'Paris Heritage & The Seine Corniche',
+    country: 'France',
+    countryCode: 'FR',
+    city: 'Île-de-France',
+    region: 'Europe',
+    category: 'Cities & Culture',
+    rating: 4.92,
+    reviewsCount: '5,100 verified reviews',
+    description: 'The City of Light along the River Seine, featuring the restored Notre-Dame spire, Montmartre artists’ village, world-class Louvre galleries, and Haussmannian boulevard cafés.',
+    bestSeason: 'April – June & September – November',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 195,
+    imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Musée d’Orsay Impressionist Wing', 'Montmartre Sacré-Cœur Dawn Walk', 'Sunset Seine Wooden Boat Cruise', 'Artisanal Croissant Tasting in Le Marais'],
+    coordinates: { lat: 48.8566, lng: 2.3522 },
+    highlights: ['Louvre & Musée d’Orsay Masterpieces', 'Restored Notre-Dame Cathedral', 'Montmartre Artists’ Quarter'],
+    recommendedStayDays: 4
+  },
+
+  // --- KENYA ---
+  {
+    id: 'maasai-mara',
+    name: 'Maasai Mara National Reserve',
+    country: 'Kenya',
+    countryCode: 'KE',
+    city: 'Narok County',
+    region: 'Africa',
+    category: 'Wildlife Sanctuaries',
+    rating: 4.98,
+    reviewsCount: '2,150 verified reviews',
+    description: 'The premier wildlife sanctuary of East Africa where over 1.5 million wildebeest and zebras brave crocodile-infested Mara River crossings during the annual Great Migration.',
+    bestSeason: 'July – October (Migration) / Year-Round (Big Five)',
+    budgetTier: '$$$$ Ultra-Luxury',
+    dailyCostUSD: 380,
+    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Sunrise Hot Air Balloon Over Savannah', 'Mara River Crossing Game Drives', 'Maasai Cultural Village Immersion', 'Big Five Safari with Expert Rangers'],
+    coordinates: { lat: -1.5020, lng: 35.1444 },
+    highlights: ['The Great Migration Mara Crossing', 'Big Five Predator Density', 'Sunrise Savannah Balloon Flights'],
+    recommendedStayDays: 4,
+    featured: true
+  },
+
+  // --- EGYPT ---
+  {
+    id: 'giza-pyramids',
+    name: 'Giza Pyramids & The Nile Valley',
+    country: 'Egypt',
+    countryCode: 'EG',
+    city: 'Greater Cairo',
+    region: 'Middle East',
+    category: 'Historic Landmarks',
+    rating: 4.93,
+    reviewsCount: '3,800 verified reviews',
+    description: 'The sole surviving wonder of the ancient world: the Great Pyramid of Khufu, the enigmatic Great Sphinx, and millennia of pharaonic civilization along the fertile banks of the Nile.',
+    bestSeason: 'October – April',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 60,
+    imageUrl: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Grand Egyptian Museum (GEM) Visit', 'Private Camel Trek around Pyramids', 'Traditional Nile Felucca Sail at Sunset', 'Khan el-Khalili Historic Spice Souk'],
+    coordinates: { lat: 29.9792, lng: 31.1342 },
+    highlights: ['Khufu, Khafre & Menkaure Pyramids', 'The Colossal Sphinx of Giza', 'New Grand Egyptian Museum (GEM)'],
+    recommendedStayDays: 3,
+    featured: true
+  },
+
+  // --- TURKEY ---
+  {
+    id: 'cappadocia',
+    name: 'Cappadocia Fairy Chimneys & Goreme',
+    country: 'Turkey',
+    countryCode: 'TR',
+    city: 'Central Anatolia',
+    region: 'Middle East',
+    category: 'Natural Wonders',
+    rating: 4.97,
+    reviewsCount: '3,650 verified reviews',
+    description: 'A lunar landscape sculpted from volcanic tuff stone, honeycombed with Byzantine underground cities, cave chapels with fresco art, and dawn skies filled with 150 hot air balloons.',
+    bestSeason: 'April – June & September – November',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 110,
+    imageUrl: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Sunrise Hot Air Balloon Flight', 'Derinkuyu Multi-Level Underground City', 'Love Valley & Rose Valley Sunset Horseback', 'Traditional Pottery Workshop in Avanos'],
+    coordinates: { lat: 38.6431, lng: 34.8289 },
+    highlights: ['Sunrise Hot Air Balloon Fleet', 'Goreme Open Air Museum Frescoes', 'Derinkuyu 8-Level Underground Fortress'],
+    recommendedStayDays: 3,
+    featured: true,
+    trending: true
+  },
+
+  // --- UNITED STATES ---
+  {
+    id: 'grand-canyon',
+    name: 'Grand Canyon National Park',
+    country: 'United States',
+    countryCode: 'US',
+    city: 'Arizona',
+    region: 'Americas',
+    category: 'Natural Wonders',
+    rating: 4.97,
+    reviewsCount: '4,600 verified reviews',
+    description: 'A colossal 1.6-kilometer-deep gorge carved by the Colorado River across two billion years of Earth’s geological strata, with expansive multi-hued vistas stretching across 446 kilometers.',
+    bestSeason: 'March – May & September – November',
+    budgetTier: '$$ Mid-Range',
+    dailyCostUSD: 145,
+    imageUrl: 'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['South Kaibab Trail to Ooh Aah Point', 'Mather Point Golden Hour Sunrise', 'Hermit Road Scenic Shuttles', 'Colorado River Whitewater Rafting'],
+    coordinates: { lat: 36.0544, lng: -112.1401 },
+    highlights: ['2-Billion-Year Geological Strata', 'South Kaibab Ridgeline Trek', 'Desert View Watchtower Vista'],
+    recommendedStayDays: 3
+  },
+
+  // --- CANADA ---
+  {
+    id: 'banff-lake-louise',
+    name: 'Banff National Park & Lake Louise',
+    country: 'Canada',
+    countryCode: 'CA',
+    city: 'Alberta',
+    region: 'Americas',
+    category: 'Natural Wonders',
+    rating: 4.96,
+    reviewsCount: '3,890 verified reviews',
+    description: 'Luminous turquoise glacial waters fed by the Victoria Glacier, surrounded by dramatic Canadian Rocky Mountain peaks, historic mountain lodges, and dense evergreen pine forests.',
+    bestSeason: 'June – September (Canoeing) / Dec – April (Skiing)',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 210,
+    imageUrl: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Red Canoe Paddling on Lake Louise', 'Plain of Six Glaciers Teahouse Hike', 'Icefields Parkway Scenic Drive to Jasper', 'Banff Upper Hot Springs Soak'],
+    coordinates: { lat: 51.4254, lng: -116.1773 },
+    highlights: ['Turquoise Glacial Waters', 'Plain of Six Glaciers Teahouse', 'Moraine Lake Valley of the Ten Peaks'],
+    recommendedStayDays: 4,
+    featured: true
+  },
+
+  // --- AUSTRALIA ---
+  {
+    id: 'great-barrier-reef',
+    name: 'Great Barrier Reef & Whitsundays',
+    country: 'Australia',
+    countryCode: 'AU',
+    city: 'Queensland',
+    region: 'Oceania',
+    category: 'Coastal & Beaches',
+    rating: 4.95,
+    reviewsCount: '3,450 verified reviews',
+    description: 'The world’s largest living organism and coral reef system spanning 2,300 kilometers along the Australian Coral Sea, home to sea turtles, manta rays, and Whitehaven pure silica sands.',
+    bestSeason: 'May – November',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 235,
+    imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Outer Reef Scuba & Snorkeling', 'Heart Reef Scenic Helicopter Flight', 'Whitehaven Beach Catamaran Cruise', 'Daintree Rainforest Indigenous Eco-Walk'],
+    coordinates: { lat: -16.9203, lng: 145.7710 },
+    highlights: ['2,300km Living Coral System', 'Whitehaven 98% Silica Sand', 'Heart Reef Coral Formation'],
+    recommendedStayDays: 4,
+    featured: true
+  },
+
+  // --- NEW ZEALAND ---
+  {
+    id: 'queenstown-milford',
+    name: 'Queenstown & Milford Sound Fiordland',
+    country: 'New Zealand',
+    countryCode: 'NZ',
+    city: 'South Island',
+    region: 'Oceania',
+    category: 'Adventure & Hiking',
+    rating: 4.97,
+    reviewsCount: '2,900 verified reviews',
+    description: 'Towering dark rock monoliths rising vertically from mirror-smooth fiord waters, cascading glacier waterfalls, and the world capital of alpine adventure on the shores of Lake Wakatipu.',
+    bestSeason: 'November – April',
+    budgetTier: '$$$ Luxury',
+    dailyCostUSD: 200,
+    imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Milford Sound Nature Cruise under Stirling Falls', 'Routeburn Track Alpine Day Hike', 'Queenstown Skyline Gondola & Luge', 'Kawarau Gorge Historic Bungy'],
+    coordinates: { lat: -44.6715, lng: 167.9256 },
+    highlights: ['Mitre Peak 1,692m Fiord Monolith', 'Stirling Falls Glacial Plunge', 'Scenic Fiordland Highway & Homer Tunnel'],
+    recommendedStayDays: 4
+  },
+
+  // --- INDIA ---
+  {
+    id: 'jaipur-amber',
+    name: 'Jaipur Pink City & Amber Fort',
+    country: 'India',
+    countryCode: 'IN',
+    city: 'Rajasthan',
+    region: 'Asia',
+    category: 'Historic Landmarks',
+    rating: 4.91,
+    reviewsCount: '2,750 verified reviews',
+    description: 'The terracotta-pink capital of Rajasthan featuring the honeycomb facade of Hawa Mahal, the mirror-palace halls of Amber Fort, and vibrant bazaars brimming with textiles and jewelry.',
+    bestSeason: 'October – March',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 48,
+    imageUrl: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Amber Fort Royal Hall of Mirrors', 'Hawa Mahal Palace of Winds Early Light', 'City Palace Royal Enclosure Tour', 'Rajasthani Thali Dining in the Old City'],
+    coordinates: { lat: 26.9855, lng: 75.8513 },
+    highlights: ['Sheesh Mahal Mirror Mosaic', 'Hawa Mahal Honeycomb Windows', 'Panna Meena Ka Kund Stepwell'],
+    recommendedStayDays: 3
+  },
+
+  // --- INDONESIA ---
+  {
+    id: 'bali-ubud',
+    name: 'Ubud Rice Terraces & Sacred Water Temples',
+    country: 'Indonesia',
+    countryCode: 'ID',
+    city: 'Bali',
+    region: 'Asia',
+    category: 'Cities & Culture',
+    rating: 4.90,
+    reviewsCount: '3,800 verified reviews',
+    description: 'Verdant stepped Tegallalang rice paddies, spiritual purification springs at Tirta Empul, sacred monkey forests, and Balinese holistic wellness sanctuaries.',
+    bestSeason: 'April – October',
+    budgetTier: '$ Budget-Friendly',
+    dailyCostUSD: 52,
+    imageUrl: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=80'
+    ],
+    activities: ['Tegallalang Sunrise Valley Walk', 'Tirta Empul Water Cleansing Ritual', 'Mount Batur Dawn Volcano Trek', 'Campuhan Ridge Scenic Walkway'],
+    coordinates: { lat: -8.5069, lng: 115.2625 },
+    highlights: ['Subak Ancient Irrigation Terraces', 'Tirta Empul Holy Springs', 'Artisanal Woodcarving Villages'],
+    recommendedStayDays: 4,
+    trending: true
+  }
+];
+
+export const HOTELS: HotelStay[] = [
+  // --- SRI LANKA STAYS ---
+  {
+    id: 'hotel-98-acres',
+    name: '98 Acres Resort & Spa',
+    destinationId: 'ella-rock',
+    destinationName: 'Ella, Sri Lanka',
+    city: 'Ella',
+    country: 'Sri Lanka',
+    type: 'Eco-Lodge',
+    rating: 4.94,
+    reviewsCount: '1,280 reviews',
+    pricePerNightUSD: 180,
+    priceRangeLabel: '$160 – $220 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Panoramic Mountain Pool', 'Tea Estate Chalets', 'Organic Restaurant', 'Ayurvedic Spa', 'Free High-Speed WiFi'],
+    description: 'An elegant, eco-friendly luxury retreat perched on a 98-acre scenic tea estate facing Ella Gap and Little Adam’s Peak.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 6.8655, lng: 81.0520 },
+    featured: true
+  },
+  {
+    id: 'hotel-water-garden-sigiriya',
+    name: 'Water Garden Sigiriya',
+    destinationId: 'sigiriya',
+    destinationName: 'Sigiriya, Sri Lanka',
+    city: 'Sigiriya',
+    country: 'Sri Lanka',
+    type: 'Luxury Resort',
+    rating: 4.96,
+    reviewsCount: '890 reviews',
+    pricePerNightUSD: 240,
+    priceRangeLabel: '$220 – $310 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Private Plunge Pool Villas', 'Sigiriya Rock View Terrace', 'Fine Dining Heliconia', 'Luxury Spa', 'Helipad Access'],
+    description: 'Surrounded by ancient water canals and tranquil lotus ponds with direct unobstructed views of the UNESCO Sigiriya monolith.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 7.9480, lng: 80.7420 },
+    featured: true
+  },
+  {
+    id: 'hotel-mirissa-beach-villas',
+    name: 'Sri Sharavi Beachfront Sanctuary',
+    destinationId: 'mirissa-beach',
+    destinationName: 'Mirissa, Sri Lanka',
+    city: 'Mirissa',
+    country: 'Sri Lanka',
+    type: 'Beach Resort',
+    rating: 4.89,
+    reviewsCount: '620 reviews',
+    pricePerNightUSD: 110,
+    priceRangeLabel: '$95 – $140 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Direct Oceanfront Access', 'Infinity Pool', 'Yoga Deck', 'Seafood Grill', 'Surf Board Rentals'],
+    description: 'Contemporary boutique oceanfront villas steps away from Mirissa’s golden sands and whale watching marina.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 5.9420, lng: 80.4810 }
+  },
+
+  // --- JAPAN STAYS ---
+  {
+    id: 'hotel-hoshinoya-kyoto',
+    name: 'Hoshinoya Kyoto Riverfront Ryokan',
+    destinationId: 'kyoto',
+    destinationName: 'Kyoto, Japan',
+    city: 'Kyoto (Arashiyama)',
+    country: 'Japan',
+    type: 'Luxury Resort',
+    rating: 4.98,
+    reviewsCount: '1,120 reviews',
+    pricePerNightUSD: 620,
+    priceRangeLabel: '$550 – $780 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Private Wooden Boat Transit', 'Michelin-Caliber Kaiseki Dining', 'Historic Machiya Rooms', 'Zen Garden Lounges', 'Tea Ceremony Pavilion'],
+    description: 'A restored riverside 17th-century merchant villa accessible only by traditional wooden boat winding up the Oi River gorge.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 35.0116, lng: 135.6778 },
+    featured: true
+  },
+  {
+    id: 'hotel-piece-hostel-kyoto',
+    name: 'Piece Boutique Hostel Kyoto',
+    destinationId: 'kyoto',
+    destinationName: 'Kyoto, Japan',
+    city: 'Kyoto Central',
+    country: 'Japan',
+    type: 'Budget Hotel & Hostel',
+    rating: 4.88,
+    reviewsCount: '3,450 reviews',
+    pricePerNightUSD: 42,
+    priceRangeLabel: '$35 – $55 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Designer Pod Dorms', 'Private Queen Rooms', 'Communal Chef Kitchen', 'Bar & Craft Beer Lounge', 'Free Japanese Breakfast'],
+    description: 'Award-winning Japanese minimalist design hostel steps from Kyoto Shinkansen Station with ultra-clean pods and vibrant community spaces.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 34.9830, lng: 135.7610 }
+  },
+
+  // --- ITALY STAYS ---
+  {
+    id: 'hotel-le-sirenuse',
+    name: 'Le Sirenuse Luxury Clifftop Positano',
+    destinationId: 'amalfi-coast',
+    destinationName: 'Amalfi Coast, Italy',
+    city: 'Positano',
+    country: 'Italy',
+    type: 'Luxury Resort',
+    rating: 4.97,
+    reviewsCount: '1,540 reviews',
+    pricePerNightUSD: 850,
+    priceRangeLabel: '$750 – $1,100 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Champagne & Oyster Bar', 'Lemon Tree Pool Terrace', 'Aveda Wellness Spa', 'Private Riva Yacht Excursions', 'Michelin-Rated La Sponda'],
+    description: 'An iconic family-run 18th-century palazzo in the heart of Positano overlooking the shimmering pastel houses and Mediterranean bay.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 40.6292, lng: 14.4866 },
+    featured: true
+  },
+
+  // --- SWITZERLAND STAYS ---
+  {
+    id: 'hotel-the-omnia',
+    name: 'The Omnia Mountain Lodge Zermatt',
+    destinationId: 'zermatt-matterhorn',
+    destinationName: 'Zermatt, Switzerland',
+    city: 'Zermatt',
+    country: 'Switzerland',
+    type: 'Boutique Stay',
+    rating: 4.99,
+    reviewsCount: '980 reviews',
+    pricePerNightUSD: 490,
+    priceRangeLabel: '$420 – $650 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Matterhorn Facing Indoor/Outdoor Pool', 'Cedar Wood Sauna', 'Fireplace Library', 'Ski Room with Boot Warmers', 'Alpine Gourmet Restaurant'],
+    description: 'Modern American lodge style perched high on a granite rock 45 meters above the roofs of central Zermatt, accessed via an elevator through the rock.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 45.9780, lng: 7.7460 },
+    featured: true
+  },
+
+  // --- MALDIVES STAYS ---
+  {
+    id: 'hotel-soneva-fushi',
+    name: 'Soneva Fushi Eco Overwater Reserve',
+    destinationId: 'baa-atoll',
+    destinationName: 'Baa Atoll, Maldives',
+    city: 'Kunfunadhoo Island',
+    country: 'Maldives',
+    type: 'Luxury Resort',
+    rating: 4.99,
+    reviewsCount: '840 reviews',
+    pricePerNightUSD: 980,
+    priceRangeLabel: '$850 – $1,400 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Water Slide into Ocean Lagoon', 'Private Butler Service (Mr./Ms. Friday)', 'Astronomical Observatory', 'Organic Treerop Dining', 'Zero-Waste Marine Center'],
+    description: 'The pioneer of barefoot luxury in the Baa Atoll biosphere, with vast sustainable overwater villas featuring direct ocean water slides.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 5.1100, lng: 73.0780 },
+    featured: true
+  },
+
+  // --- GREECE STAYS ---
+  {
+    id: 'hotel-canaves-oia',
+    name: 'Canaves Oia Suites & Caldera Spa',
+    destinationId: 'santorini-caldera',
+    destinationName: 'Santorini, Greece',
+    city: 'Oia',
+    country: 'Greece',
+    type: 'Boutique Stay',
+    rating: 4.97,
+    reviewsCount: '1,420 reviews',
+    pricePerNightUSD: 520,
+    priceRangeLabel: '$450 – $720 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Cave Pool Suites', 'Cliffside Infinity Pool', 'Caldera Wine Cellar', 'Private Catamaran Charters', 'Sunset Panorama Bar'],
+    description: 'Carved into the sheer volcanic cliffs of Oia with whitewashed minimalist architecture and uninterrupted views of the sparkling Aegean caldera.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 36.4630, lng: 25.3780 },
+    featured: true
+  },
+
+  // --- KENYA STAYS ---
+  {
+    id: 'hotel-angama-mara',
+    name: 'Angama Mara Suspended Safari Lodge',
+    destinationId: 'maasai-mara',
+    destinationName: 'Maasai Mara, Kenya',
+    city: 'Oloololo Escarpment',
+    country: 'Kenya',
+    type: 'Eco-Lodge',
+    rating: 4.99,
+    reviewsCount: '760 reviews',
+    pricePerNightUSD: 950,
+    priceRangeLabel: '$850 – $1,250 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['11-Meter Glass Clifftop Tented Suites', 'Private Safari Vehicles & Trackers', 'Photographic Studio', 'Fitness Center with Mara View', 'Bush Breakfast Setups'],
+    description: 'Perched 300 meters above the Maasai Mara floor on the edge of the Great Rift Valley, with legendary 180-degree panoramic views of the migration.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: -1.2580, lng: 35.0310 },
+    featured: true
+  },
+
+  // --- THAILAND STAYS ---
+  {
+    id: 'hotel-rayavadee-krabi',
+    name: 'Rayavadee Beachfront National Marine Sanctuary',
+    destinationId: 'krabi-railay',
+    destinationName: 'Krabi, Thailand',
+    city: 'Railay',
+    country: 'Thailand',
+    type: 'Beach Resort',
+    rating: 4.95,
+    reviewsCount: '1,780 reviews',
+    pricePerNightUSD: 360,
+    priceRangeLabel: '$310 – $480 / night (est.)',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'
+    ],
+    facilities: ['Two-Story Circular Pavilions', 'The Grotto Cliff Dining', 'Spa with Herbal Steam Room', 'Private Speedboat Transfers', 'Tennis Courts'],
+    description: 'Bordering Krabi Marine National Park surrounded by limestone pinnacles and three pristine white sand beaches.',
+    bookingUrl: 'https://www.booking.com',
+    coordinates: { lat: 8.0080, lng: 98.8410 },
+    featured: true
+  }
+];
 
 export const CONTINENTS: ContinentSector[] = [
-  {
-    id: 'europe',
-    name: 'Europe',
-    countriesCount: 44,
-    subtitle: 'OLD WORLD HERITAGE & RAIL ROUTES',
-    statLabel: '240+ curated expeditions',
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
-    featuredDestinations: ['Amalfi Coast', 'Swiss Alps', 'Cyclades'],
-    description: 'High-speed rail corridors, Roman antiquity, Mediterranean coastlines, and alpine passes.'
-  },
   {
     id: 'asia',
     name: 'Asia',
     countriesCount: 48,
-    subtitle: 'TEMPLES, MEGACITIES & ARCHIPELAGOS',
-    statLabel: '390+ curated expeditions',
+    subtitle: 'TEMPLES, CORAL ATOLLS & ALPINE TEA ESTATES',
+    statLabel: '14 sovereign nations represented',
     imageUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80',
-    featuredDestinations: ['Kyoto', 'Hanoi', 'Raja Ampat'],
-    description: 'Ancient Shinto shrines, culinary night markets, limestone karsts, and tranquil tea terraces.'
+    featuredDestinations: ['Sigiriya, Sri Lanka', 'Kyoto, Japan', 'Baa Atoll, Maldives', 'Krabi, Thailand'],
+    description: 'Ancient Shinto shrines, sacred Buddhist rock citadels, luminescent coral atolls, and verdant highland tea terraces.'
+  },
+  {
+    id: 'europe',
+    name: 'Europe',
+    countriesCount: 44,
+    subtitle: 'ALPINE PEAKS, OLD-WORLD HERITAGE & COASTAL CORNICHES',
+    statLabel: '18 sovereign nations represented',
+    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+    featuredDestinations: ['Amalfi Coast, Italy', 'Zermatt, Switzerland', 'Santorini, Greece', 'Paris, France'],
+    description: 'Pastel cliffside harbors, cogwheel railways to the Matterhorn, Byzantine monasteries, and centuries of preserved culture.'
   },
   {
     id: 'americas',
     name: 'Americas',
     countriesCount: 35,
-    subtitle: 'WILDERNESS & ANCIENT RUINS',
-    statLabel: '410+ destinations',
-    imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1000&q=80',
-    featuredDestinations: ['Banff', 'Oaxaca', 'Patagonia'],
-    description: 'Glacial Rocky Mountain lakes, Mayan ruins, Andean trails, and dense Amazonian rainforests.'
+    subtitle: 'WILDERNESS CANYONS, GLACIAL LAKES & PACIFIC REEFS',
+    statLabel: '12 sovereign nations represented',
+    imageUrl: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1200&q=80',
+    featuredDestinations: ['Banff, Canada', 'Grand Canyon, USA', 'Tulum, Mexico', 'Rio de Janeiro, Brazil'],
+    description: 'Two-billion-year-old canyon abysses, turquoise Rocky Mountain glacial waters, and ancient Mayan oceanfront temples.'
   },
   {
     id: 'africa',
-    name: 'Africa',
+    name: 'Africa & Middle East',
     countriesCount: 54,
-    subtitle: 'SAVANNAHS, DUNES & CRADLES',
-    statLabel: '310+ destinations',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1000&q=80',
-    featuredDestinations: ['Serengeti', 'Namib Desert', 'Zanzibar'],
-    description: 'The Great Migration, Sahara dunes, vibrant souks, and volcanic wildlife sanctuaries.'
+    subtitle: 'SAVANNAH MIGRATIONS, PYRAMID TOMBS & HOT AIR BALLOONS',
+    statLabel: '15 sovereign nations represented',
+    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80',
+    featuredDestinations: ['Maasai Mara, Kenya', 'Giza Pyramids, Egypt', 'Cappadocia, Turkey', 'Cape Town, South Africa'],
+    description: 'The Great Migration savannahs, the sole surviving ancient world wonder, and dawn balloon flights over Anatolian fairy chimneys.'
   },
   {
     id: 'oceania',
     name: 'Oceania',
     countriesCount: 14,
-    subtitle: 'ATOLLS, CORAL REEFS & OUTBACK',
-    statLabel: '135+ destinations',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80',
-    featuredDestinations: ['Great Barrier Reef', 'Milford Sound', 'Fiji Atolls'],
-    description: 'Polynesian waters, sacred red desert gorges, barrier reefs, and subantarctic sounds.'
-  }
-];
-
-export const DESTINATIONS: Destination[] = [
-  {
-    id: 'kyoto',
-    name: 'Kyoto, Japan',
-    country: 'Japan',
-    region: 'Asia',
-    badge: 'BEST SPRING SEASON',
-    badgeType: 'season',
-    categoryLabel: 'Historic • Cultural',
-    category: 'Historic Landmarks',
-    rating: 4.90,
-    reviewsCount: '1.8k',
-    description: 'Ancient temples, moss rock gardens, preserved tea houses, and tranquil bamboo pathways.',
-    budgetTier: '$$ Mid-Range',
-    dailyCostUSD: 95,
-    duration: '4-6 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'JAPAN • KANSAI',
-    coordinates: { lat: 35.0116, lng: 135.7681 },
-    elevation: '55m',
-    bestMonths: 'March - May (Sakura) & October - November (Autumn foliage)',
-    highlights: ['Fushimi Inari Taisha 10,000 Torii', 'Arashiyama Sagano Bamboo Grove', 'Kinkaku-ji Golden Pavilion', 'Gion Geisha District'],
-    dayByDaySample: [
-      { day: 1, title: 'Eastern Foothills & Torii Corridors', items: ['Dawn hike up Mt. Inari before crowds', 'Green matcha ceremony in Higashiyama', 'Sunset panorama from Kiyomizu-dera wooden terrace'] },
-      { day: 2, title: 'Bamboo Groves & Zen Hermitages', items: ['Arashiyama early bamboo walk', 'Tenryu-ji landscape pond garden', 'Okochi Sanso teahouse viewpoint'] },
-      { day: 3, title: 'Historic Markets & Twilight Gion', items: ['Nishiki Market street sampling (tsukemono, yuba)', 'Philosopher’s Path canal stroll', 'Evening walk along Shirakawa canal in Gion'] }
-    ]
-  },
-  {
-    id: 'amalfi',
-    name: 'Amalfi Coast, Italy',
-    country: 'Italy',
-    region: 'Europe',
-    badge: 'COASTAL GEM',
-    badgeType: 'gem',
-    categoryLabel: 'Scenic • Luxury',
-    category: 'Coastal & Beaches',
-    rating: 4.85,
-    reviewsCount: '2.4k',
-    description: 'Cliffside pastel villages, serpentine panoramic coastal routes, and fragrant hillside lemon groves.',
-    budgetTier: '$$$ Luxury',
-    dailyCostUSD: 230,
-    duration: '3-5 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'ITALY • CAMPANIA',
-    coordinates: { lat: 40.6340, lng: 14.6027 },
-    elevation: '20m',
-    bestMonths: 'May - June & September - October',
-    highlights: ['Positano vertical cliffside alleys', 'Path of the Gods clifftop trek', 'Ravello cliff gardens of Villa Cimbrone', 'Capri grottos private boat trip'],
-    dayByDaySample: [
-      { day: 1, title: 'Arrival & Positano Cascade', items: ['Check into boutique clifftop retreat', 'Ferry arrival past pastel facades', 'Dinner at Da Vincenzo with local Falanghina'] },
-      { day: 2, title: 'Sentiero degli Dei (Path of the Gods)', items: ['Bomerano to Nocelle high ridge hike', 'Limoncello granita in Montepertuso', 'Sunset swim at Fornillo beach'] },
-      { day: 3, title: 'Ravello Heights & Amalfi Duomo', items: ['Villa Rufolo medieval panoramic gardens', 'Amalfi Arab-Norman cathedral facade', 'Pasticceria Pansa lemon pastries'] }
-    ]
-  },
-  {
-    id: 'banff',
-    name: 'Banff National Park, Canada',
-    country: 'Canada',
-    region: 'Americas',
-    badge: 'NATURAL WONDER',
-    badgeType: 'wonder',
-    categoryLabel: 'Wilderness • Hiking',
-    category: 'Natural Wonders',
-    rating: 4.88,
-    reviewsCount: '3.1k',
-    description: 'Electrifying turquoise glacial waters, rugged Rocky Mountain spires, and subalpine wildlife corridors.',
-    budgetTier: '$$ Mid-Range',
-    dailyCostUSD: 110,
-    duration: '5-7 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'CANADA • ALBERTA',
-    coordinates: { lat: 51.1784, lng: -115.5708 },
-    elevation: '1,383m',
-    bestMonths: 'July - August (hiking & turquoise lakes) or Dec - March (powder ski)',
-    highlights: ['Lake Louise glacial shoreline', 'Moraine Lake Valley of the Ten Peaks', 'Icefields Parkway road expedition', 'Johnston Canyon catwalks'],
-    dayByDaySample: [
-      { day: 1, title: 'Lake Louise & Plain of Six Glaciers', items: ['Sunrise at Lake Louise shoreline', 'Hike up to Swiss-style Lake Agnes Tea House', 'Canoe rental on turquoise glacial melt'] },
-      { day: 2, title: 'Moraine Lake & Larch Valley', items: ['Valley of the Ten Peaks photo vantage', 'Sentinel Pass elevation scramble', 'Evening soak in Banff Upper Hot Springs'] },
-      { day: 3, title: 'Icefields Parkway Expedition', items: ['Bow Lake & Peyto Lake lookout', 'Athabasca Glacier ice-walk excursion', 'Columbia Icefield discovery center'] }
-    ]
-  },
-  {
-    id: 'serengeti',
-    name: 'Serengeti, Tanzania',
-    country: 'Tanzania',
-    region: 'Africa',
-    badge: 'TOP ADVENTURE',
-    badgeType: 'adventure',
-    categoryLabel: 'Safari • Wildlife',
-    category: 'Adventure & Hiking',
-    rating: 4.97,
-    reviewsCount: '1.2k',
-    description: 'The world-famous Great Migration across boundless savannah plains, predator habitats, and starry skies.',
-    budgetTier: '$$$ Safari',
-    dailyCostUSD: 310,
-    duration: '6-8 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'TANZANIA • MARA REGION',
-    coordinates: { lat: -2.3333, lng: 34.8333 },
-    elevation: '1,600m',
-    bestMonths: 'July - October (Mara River crossing) & Jan - Feb (calving season)',
-    highlights: ['Seronera Valley big cat safaris', 'Grumeti and Mara river crossings', 'Dawn hot air balloon over acacia plains', 'Maasai wilderness tracker guides'],
-    dayByDaySample: [
-      { day: 1, title: 'Fly-In to Seronera Valley', items: ['Bush plane landing on gravel airstrip', 'Afternoon game drive tracking lion prides', 'Bush camp campfire storytelling under Orion'] },
-      { day: 2, title: 'Mara River Migration Vigil', items: ['Sunrise drive tracking 100,000+ wildebeest herds', 'Crocodile and zebra crossing watchpoints', 'Picnic lunch under whistling acacia trees'] },
-      { day: 3, title: 'Dawn Balloon Flight & Kopjes', items: ['Silent hot air balloon ascent over waking herds', 'Champagne breakfast in open savannah', 'Moru Kopjes black rhino reserve search'] }
-    ]
-  },
-  {
-    id: 'santorini',
-    name: 'Santorini & Cyclades',
-    country: 'Greece',
-    region: 'Europe',
-    badge: 'ROMANTIC ESCAPE',
-    badgeType: 'romance',
-    categoryLabel: 'Islands • Romance',
-    category: 'Coastal & Beaches',
-    rating: 4.80,
-    reviewsCount: '4.2k',
-    description: 'Caldera rim lookouts, volcanic black beaches, subterranean wine cellars, and Aegean sailing.',
-    budgetTier: '$$$ Luxury',
-    dailyCostUSD: 245,
-    duration: '3-4 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'GREECE • CYCLADES',
-    coordinates: { lat: 36.3932, lng: 25.4615 },
-    elevation: '300m',
-    bestMonths: 'Late April - June & September - October',
-    highlights: ['Oia caldera sunset cliff trail', 'Assyrtiko volcanic wine tasting', 'Akrotiri Bronze Age Minoan ruins', 'Red Beach and White Beach catamaran'],
-    dayByDaySample: [
-      { day: 1, title: 'Fira to Oia Caldera Rim Hike', items: ['10km cliff path between Fira, Imerovigli, and Oia', 'Skoutari cliff cave photo points', 'Sunset over Ammoudi Bay'] },
-      { day: 2, title: 'Volcano & Catamaran Cruise', items: ['Nea Kameni active volcanic crater walk', 'Palea Kameni sulfur hot springs swim', 'Barbecue seafood lunch on deck'] },
-      { day: 3, title: 'Minoan History & Wine Caves', items: ['Akrotiri excavated prehistoric city', 'Santo Wines terrace overlooking the crater', 'Dinner in Megalochori quiet village square'] }
-    ]
-  },
-  {
-    id: 'oaxaca',
-    name: 'Oaxaca, Mexico',
-    country: 'Mexico',
-    region: 'Americas',
-    badge: 'FOOD CAPITAL',
-    badgeType: 'food',
-    categoryLabel: 'Gastronomy • Artisanal',
-    category: 'Historic Landmarks',
-    rating: 4.92,
-    reviewsCount: '1.9k',
-    description: 'Centuries-old mole recipes, smoky mezcal distilleries, Zapotec ruins, and vibrant textile markets.',
-    budgetTier: '$ Budget-Friendly',
-    dailyCostUSD: 42,
-    duration: '4-5 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1512813195386-6cf811ad3542?auto=format&fit=crop&w=1000&q=80',
-    locationTag: 'MEXICO • OAXACA STATE',
-    coordinates: { lat: 17.0732, lng: -96.7266 },
-    elevation: '1,555m',
-    bestMonths: 'October - March (Día de los Muertos in late Oct)',
-    highlights: ['Mercado 20 de Noviembre smoke alley', 'Monte Albán ancient Zapotec acropolis', 'Hierve el Agua petrified waterfalls', 'Traditional wild agave mezcal palenques'],
-    dayByDaySample: [
-      { day: 1, title: 'Colonial Heart & Smoke Hall', items: ['Santo Domingo golden baroque monastery', 'Pasillo de Humo grilled tasajo and chorizo', 'Zócalo evening marimba performances'] },
-      { day: 2, title: 'Monte Albán & Artisan Pueblos', items: ['Pre-Columbian hilltop pyramids of Monte Albán', 'San Antonio Arrazola alebrije woodcarvers', 'Mole negro degustation at Casa Oaxaca'] },
-      { day: 3, title: 'Hierve el Agua & Mezcal Trail', items: ['Mineral spring infinity pools at cliff edge', 'Matatlán traditional artisanal copper pot distilleries', 'Teotitlán del Valle natural cochineal rug weaving'] }
-    ]
-  },
-  {
-    id: 'patagonia',
-    name: 'Torres del Paine, Chile',
-    country: 'Chile',
-    region: 'Americas',
-    badge: 'EXPEDITION CIRCUIT',
-    badgeType: 'adventure',
-    categoryLabel: 'Wilderness • Glaciers',
-    category: 'Adventure & Hiking',
-    rating: 4.94,
-    reviewsCount: '1.4k',
-    description: 'Towering granite horn peaks, roaring glacial icefalls, cobalt lakes, and wind-sculpted steppe.',
-    budgetTier: '$$ Mid-Range',
-    dailyCostUSD: 98,
-    duration: '5-9 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80',
-    coordinates: { lat: -51.2532, lng: -72.8814 },
-    elevation: '2,884m',
-    bestMonths: 'November - March',
-    highlights: ['Base de las Torres granite towers', 'French Valley hanging glacier amphitheater', 'Grey Glacier iceberg navigation', 'Guanaco herds and Andean condor spotting'],
-    dayByDaySample: [
-      { day: 1, title: 'Las Torres Ascent', items: ['Early morning climb to Mirador Las Torres', 'Glacial tarn reflection under dawn light', 'Refugio Central dinner and route review'] },
-      { day: 2, title: 'Valle del Francés', items: ['Catamaran across Lake Pehoé', 'Listening to thunderous avalanches from Paine Grande', 'Plateau view of the granite Los Cuernos'] }
-    ]
-  },
-  {
-    id: 'raja-ampat',
-    name: 'Raja Ampat, Indonesia',
-    country: 'Indonesia',
-    region: 'Asia',
-    badge: 'MARINE SANCTUARY',
-    badgeType: 'gem',
-    categoryLabel: 'Atolls • Diving',
-    category: 'Coastal & Beaches',
-    rating: 4.96,
-    reviewsCount: '980',
-    description: 'The global epicenter of marine biodiversity with emerald mushroom karst islets and pristine reef gardens.',
-    budgetTier: '$$$ Luxury',
-    dailyCostUSD: 210,
-    duration: '7-10 Days',
-    imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1000&q=80',
-    coordinates: { lat: -0.2333, lng: 130.5167 },
-    elevation: '10m',
-    bestMonths: 'October - April',
-    highlights: ['Pianemo karst archipelago overlook', 'Manta Sandy cleaning station dive', 'Red bird-of-paradise dawn lek', 'Yenbuba jetty coral gardens'],
-    dayByDaySample: [
-      { day: 1, title: 'Waisai to Homestay Haven', items: ['Wooden boat transit through crystalline channels', 'Check in to overwater bamboo stilt bungalow', 'House reef twilight snorkel with blacktip reef sharks'] }
-    ]
-  }
-];
-
-export const BUDGET_ARCHETYPES: BudgetArchetype[] = [
-  {
-    id: 'vietnam',
-    tier: 'Backpacker',
-    name: 'Vietnam (Hanoi & Da Nang)',
-    regionLabel: 'SOUTHEAST ASIA',
-    dailySpendUSD: 32,
-    tagline: 'Exceptional street gastronomy, high-speed rail access, and scenic limestone coasts.',
-    stays: { name: 'Stay (Hostel/Guesthouse)', cost: 12 },
-    food: { name: 'Food & Coffee', cost: 11 },
-    transit: { name: 'Local Transit & Sim', cost: 9 },
-    recommendedDuration: '14-21 Days',
-    perks: ['Egg coffee & Bánh mì everywhere', 'Sleeper buses between UNESCO sites', 'Unmatched value per dollar']
-  },
-  {
-    id: 'portugal',
-    tier: 'Backpacker',
-    name: 'Portugal (Porto & Silver Coast)',
-    regionLabel: 'SOUTHERN EUROPE',
-    dailySpendUSD: 42,
-    tagline: 'Historic tiled quarters, coastal walking paths, metro transit networks, and surf breaks.',
-    stays: { name: 'Stay (Co-living/Hostel)', cost: 20 },
-    food: { name: 'Food & Bakeries', cost: 14 },
-    transit: { name: 'Urban Train & Metro', cost: 8 },
-    recommendedDuration: '10-14 Days',
-    perks: ['€1.50 Pastéis de Nata & Espresso', 'Urban rail along Atlantic coast', 'Safe walking cities with beach access']
-  },
-  {
-    id: 'guatemala',
-    tier: 'Backpacker',
-    name: 'Guatemala (Antigua & Lake Atitlán)',
-    regionLabel: 'CENTRAL AMERICA',
-    dailySpendUSD: 28,
-    tagline: 'Volcanic panoramic hikes, artisan weaving villages, and world-class coffee plantations.',
-    stays: { name: 'Stay (Eco-Lodge/Shared)', cost: 10 },
-    food: { name: 'Comedores & Markets', cost: 11 },
-    transit: { name: 'Water Taxis & Buses', cost: 7 },
-    recommendedDuration: '12-16 Days',
-    perks: ['Lancha boat transport on the lake', 'Acatenango volcanic base camps', 'Rich Mayan textile traditions']
-  },
-  // Comfort Archetypes
-  {
-    id: 'taiwan',
-    tier: 'Comfort',
-    name: 'Taiwan (Taipei & Taroko)',
-    regionLabel: 'EAST ASIA',
-    dailySpendUSD: 78,
-    tagline: 'Night market feasts, bullet train coastlines, mountain hot springs, and lush tea trails.',
-    stays: { name: 'Stay (Boutique Hotel/Apt)', cost: 42 },
-    food: { name: 'Gourmet Din Tai Fung & Markets', cost: 22 },
-    transit: { name: 'High Speed Rail & Metro', cost: 14 },
-    recommendedDuration: '10-14 Days',
-    perks: ['EasyCard universal transit', '24h convenience store services', 'Sublime marble canyon hiking']
-  },
-  {
-    id: 'greece-mainland',
-    tier: 'Comfort',
-    name: 'Greece (Meteora & Peloponnese)',
-    regionLabel: 'MEDITERRANEAN',
-    dailySpendUSD: 85,
-    tagline: 'Monasteries atop sandstone pillars, seaside tavernas, olive groves, and historic ruins.',
-    stays: { name: 'Stay (Stone Guesthouse)', cost: 48 },
-    food: { name: 'Taverna Meze & Fresh Fish', cost: 24 },
-    transit: { name: 'Rental Car & Fuel', cost: 13 },
-    recommendedDuration: '8-12 Days',
-    perks: ['Uncrowded monasteries at dawn', 'Farm-to-table Greek olive oils', 'Ancient Epidaurus & Mycenae']
-  },
-  {
-    id: 'costa-rica',
-    tier: 'Comfort',
-    name: 'Costa Rica (Monteverde & Manuel Antonio)',
-    regionLabel: 'CENTRAL AMERICA',
-    dailySpendUSD: 95,
-    tagline: 'Cloud forest canopies, sloth sanctuaries, Pacific sunsets, and certified organic coffee.',
-    stays: { name: 'Stay (Rainforest Eco-Cabin)', cost: 52 },
-    food: { name: 'Sodas & Ocean Seafood', cost: 26 },
-    transit: { name: 'Intercity Shuttles', cost: 17 },
-    recommendedDuration: '9-14 Days',
-    perks: ['Ziplining through mist canopies', 'Trained naturalist wildlife guides', '100% renewable energy focus']
-  },
-  // Luxury Archetypes
-  {
-    id: 'switzerland',
-    tier: 'Luxury',
-    name: 'Switzerland (Zermatt & Lucerne)',
-    regionLabel: 'CENTRAL EUROPE',
-    dailySpendUSD: 310,
-    tagline: 'Matterhorn glacier views, Glacier Express panoramas, private spas, and fondue chalets.',
-    stays: { name: 'Stay (Alpine Spa Chalet)', cost: 195 },
-    food: { name: 'Michelin Stübli Dining', cost: 75 },
-    transit: { name: '1st Class Swiss Travel Pass', cost: 40 },
-    recommendedDuration: '7-10 Days',
-    perks: ['Unlimited scenic panoramic trains', 'Heated infinity pools facing peaks', 'Private mountain guides']
-  },
-  {
-    id: 'japan-luxury',
-    tier: 'Luxury',
-    name: 'Japan (Hakone & Kyoto Ryokan)',
-    regionLabel: 'EAST ASIA',
-    dailySpendUSD: 285,
-    tagline: 'Private onsen hot springs, multi-course kaiseki banquets, and tea master ceremonies.',
-    stays: { name: 'Stay (Historic Luxury Ryokan)', cost: 180 },
-    food: { name: 'Kaiseki & Wagyu Gastronomy', cost: 75 },
-    transit: { name: 'Shinkansen Green Car', cost: 30 },
-    recommendedDuration: '6-9 Days',
-    perks: ['Open-air cedar tubs with Mt Fuji views', 'Yukata robes & seasonal cuisine', 'Luggage forwarding services']
-  },
-  {
-    id: 'norway',
-    tier: 'Luxury',
-    name: 'Norway (Lofoten & Geirangerfjord)',
-    regionLabel: 'SCANDINAVIA',
-    dailySpendUSD: 295,
-    tagline: 'Architectural rorbu sea cabins, midnight sun sailing, king crab feasts, and fjord safaris.',
-    stays: { name: 'Stay (Designer Waterfront Cabin)', cost: 185 },
-    food: { name: 'Nordic Foraged Gastronomy', cost: 70 },
-    transit: { name: 'Electric Fjord Ferry & EV', cost: 40 },
-    recommendedDuration: '8-12 Days',
-    perks: ['Private silent electric catamaran', 'Aurora borealis or midnight sun', 'Sauna sessions with arctic plunge']
+    subtitle: 'BARRIER REEFS, SUBANTARCTIC FIORDS & RED GORGES',
+    statLabel: '8 sovereign nations represented',
+    imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=1200&q=80',
+    featuredDestinations: ['Great Barrier Reef, Australia', 'Milford Sound, New Zealand', 'Sydney Harbour'],
+    description: 'The world’s largest living coral reef ecosystem and sheer vertical fiord monoliths rising from mirror-smooth waters.'
   }
 ];
 
 export const EDITORIAL_ARTICLES: EditorialArticle[] = [
   {
-    id: 'hidden-temples',
-    badge: 'CULTURAL ARCHAEOLOGY',
-    badgeColor: 'border-amber-700/30 text-amber-800 bg-amber-50',
-    author: 'Clara Vance',
-    readTime: '7 min read',
-    title: 'Hidden Temples of Southeast Asia: Beyond the Crowds',
-    summary: 'How to respectfully explore off-grid Khmer sanctuaries, remote Lao stupas, and forgotten river shrines without tour bus congestion.',
-    seasonalWindow: 'Seasonal Window: Oct - Feb',
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1000&q=80',
+    id: 'sri-lanka-slow-travel',
+    badge: 'CURATED FIELD REPORT',
+    badgeColor: 'emerald',
+    author: 'Elena R. Vance, Cartographic Fellow',
+    readTime: '6 min read',
+    title: 'Slow Travel in Ceylon: From Sigiriya’s Water Gardens to Ella’s Mist-Shrouded Tea Lines',
+    summary: 'A definitive 10-day slow itinerary charting ancient irrigation systems, scenic narrow-gauge mountain railways, and low-impact coastal homestays across Sri Lanka.',
+    seasonalWindow: 'Best Window: December – April',
+    imageUrl: 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=1000&q=80',
+    destinationRef: 'sigiriya',
     fullContent: [
-      'While sunrise at Angkor Wat draws thousands of visitors daily, just 45 kilometers deeper into the Siem Reap jungle lies Beng Mealea—a 12th-century temple still swallowed by strangler figs and jungle vines.',
-      'By traveling with localized tuk-tuk drivers who speak Khmer and navigating between 6:30 AM and 9:00 AM, independent explorers can experience ancient lintels and carvings in meditative silence.',
-      'In Champasak, Southern Laos, the pre-Angkorian Wat Phou rests on the slopes of Mount Phu Kao. Designated as a UNESCO World Heritage site, it rarely sees more than thirty visitors an hour, offering panoramic views across the Mekong river basin.',
-      'Cultural etiquette protocol: Ensure shoulders and knees remain covered, hire village guides whose fees directly support local school foundations, and refrain from touching fragile sandstone reliefs.'
+      'Travel in Sri Lanka is best experienced along the slow rhythm of the historical Ceylon railway network. Boarding the blue locomotive from Kandy into the tea-covered highlands of Nuwara Eliya and Ella reveals engineering feats constructed over a century ago.',
+      'At dawn, ascending the fortress of Sigiriya before the mid-day heat reveals an intricate 5th-century urban masterplan: symmetrical boulder gardens, sophisticated subterranean water channels, and ancient fresco galleries that have withstood fifteen centuries of tropical monsoons.'
     ],
     keyTakeaways: [
-      'Visit between dawn and 9:00 AM for soft morning light and zero tour coaches.',
-      'Opt for Beng Mealea, Koh Ker, and Banteay Chhmar instead of the inner circuit.',
-      'Always dress respectfully and carry crisp small bills for local restoration conservancies.'
+      'Reserve first-class observation train tickets at least 30 days in advance.',
+      'Climb Pidurangala Rock for an unobstructed direct sunrise vista of Sigiriya.',
+      'Support locally certified wildlife safari operators in Minneriya and Yala.'
     ]
   },
   {
-    id: 'patagonia-hiking',
-    badge: 'LOW-IMPACT TREKKING',
-    badgeColor: 'border-emerald-700/30 text-emerald-800 bg-emerald-50',
-    author: 'Mateo Morales',
-    readTime: '11 min read',
-    title: 'Sustainable Hiking in Patagonia: The High Wind Circuit',
-    summary: 'Leave-no-trace protocols, hut reservations, micro-weather navigation, and supporting grassroots conservation in Southern Chile.',
-    seasonalWindow: 'Seasonal Window: Nov - Mar',
-    imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1000&q=80',
+    id: 'swiss-alps-rail-guide',
+    badge: 'FIELD DISPATCH',
+    badgeColor: 'amber',
+    author: 'Julian Thorne, Alpine Route Architect',
+    readTime: '8 min read',
+    title: 'The Car-Free Valleys of the Swiss Alps: Crossing Zermatt and Lauterbrunnen by Cogwheel',
+    summary: 'Navigating the car-free villages of Valais and the Bernese Oberland using electric cogwheels, cableways, and historic mountain rifugios.',
+    seasonalWindow: 'Best Window: June – September',
+    imageUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=1000&q=80',
+    destinationRef: 'zermatt-matterhorn',
     fullContent: [
-      'Patagonia is one of the most fragile wilderness ecosystems on earth. With the rise of international trekking on the W and O circuits in Torres del Paine, park rangers have enacted strict carrying-capacity regulations.',
-      'Every hiker must carry all non-biodegradable waste out of the park. Open campfires are banned under Chilean penal law following historical accidental wildfires caused by tourist stoves.',
-      'Wind conditions can shift from 15 knots to 80-knot gusts in under thirty minutes across Paso John Gardner. Waterproof technical shells rated to 28,000mm hydrostatic head are non-negotiable.',
-      'Support local estancias and regenerative horse trekking outfits around Puerto Natales. Many former cattle ranches have transitioned into private conservation reserves protecting the endangered huemul deer and Andean condor.'
+      'Switzerland’s commitment to car-free alpine preservation offers an unmatched sense of stillness. Arriving in Zermatt, where only quiet electric shuttles and horse carriages operate, immediately reorients your sense of pace.',
+      'From the Gornergrat cogwheel train at 3,089 meters, the panorama encompasses 29 four-thousand-meter peaks and the Gorner Glacier, demonstrating how high-altitude transit can coexist harmoniously with fragile glacial environments.'
     ],
     keyTakeaways: [
-      'Reserve CONAF camping permits a minimum of 6 months in advance.',
-      'Pack four-season gear: sub-zero sleep systems and high-denier windbreak shelters.',
-      'Always filter glacial meltwater downstream from wildlife grazing meadows.'
+      'The Swiss Travel Pass covers unlimited travel on federal trains, boats, and mountain buses.',
+      'Hike the 5-Lakes Walk in early morning for glass-like Matterhorn reflections in Stellisee.',
+      'Carry refillable water flasks; Swiss village fountains provide pristine glacier mineral water.'
     ]
   },
   {
-    id: 'european-rail',
-    badge: 'TRANSIT JOURNAL',
-    badgeColor: 'border-blue-700/30 text-blue-800 bg-blue-50',
-    author: 'Jonas Lindqvist',
-    readTime: '9 min read',
-    title: 'The Complete European Rail Itinerary: 21 Days, 6 Borders',
-    summary: 'Connecting Amsterdam to Vienna, Ljubljana, and the Adriatic coast using Eurail passes, sleeper carriages, and city bike rentals.',
-    seasonalWindow: 'Seasonal Window: Apr - Oct',
-    imageUrl: 'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=1000&q=80',
+    id: 'cyclades-slow-islands',
+    badge: 'EXPEDITION ARCHIVE',
+    badgeColor: 'sky',
+    author: 'Sofia Katsaros, Mediterranean Historian',
+    readTime: '5 min read',
+    title: 'Beyond the Oia Crowds: The Geological Wonder of the Aegean Caldera',
+    summary: 'Understanding the volcanic origins of Santorini, ancient Thera trade routes, and quiet cliffside paths along the caldera rim.',
+    seasonalWindow: 'Best Window: May – June & September',
+    imageUrl: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1000&q=80',
+    destinationRef: 'santorini-caldera',
     fullContent: [
-      'Air travel across Europe accounts for significant carbon emissions, yet modern high-speed lines and night trains offer a far more romantic, civilized rhythm of travel.',
-      'The journey starts at Amsterdam Centraal on the ÖBB Nightjet, waking up over fresh rolls and espresso as the train glides along the Bavarian Alps into Vienna.',
-      'From Vienna, take the historic Semmering railway—a 19th-century engineering marvel of stone viaducts and curved tunnels—down into the emerald waters of Slovenia’s Lake Bled and Ljubljana.',
-      'End on the coastal branch toward Trieste and Venice, where historic passenger ferries connect directly to lagoon islands. Total transit cost with an advance 7-day-in-1-month Eurail Global Pass averages under €340.'
+      'The crescent shape of Santorini is the physical rim of a colossal collapsed volcano that altered the course of Bronze Age civilization around 1600 BCE.',
+      'Walking the unpaved trail from Fira through Imerovigli to Oia provides breathtaking views uninterrupted by tour buses. Along the ridge, traditional cave houses (yposkafa) show ingenious passive cooling techniques honed over centuries.'
     ],
     keyTakeaways: [
-      'Book Nightjet couchette or sleeper compartments 90 days out for best privacy.',
-      'Download the Rail Planner app for real-time offline timetable sync.',
-      'Carry a lightweight bike lock to utilize station bike-share networks at every stop.'
+      'Walk the 10km caldera rim trail in the early morning to avoid peak heat.',
+      'Explore Akrotiri, one of the Aegean’s most significant prehistoric archaeological sites.',
+      'Sample volcanic Assyrtiko wines grown in unique basket-woven ground coils.'
     ]
   }
 ];
 
 export const INITIAL_ITINERARY_ITEMS: ItineraryItem[] = [
   {
-    id: 'item-1',
+    id: 'it-1',
     day: 1,
-    time: '09:00 AM',
-    title: 'Fushimi Inari Early Ascent',
+    time: '06:30 AM',
+    title: 'Pidurangala Rock Sunrise Climb (Sigiriya)',
     duration: '2.5 hrs',
-    costUSD: 0,
-    note: 'Estimated $0 Entrance Fee • Beat morning tour buses',
+    costUSD: 5,
+    note: 'Panoramic view of Sigiriya Rock Fortress in morning golden hour light',
+    category: 'activity'
+  },
+  {
+    id: 'it-2',
+    day: 1,
+    time: '10:00 AM',
+    title: 'Ancient Water Gardens & Sigiriya Monolith',
+    duration: '3.0 hrs',
+    costUSD: 36,
+    note: 'UNESCO 5th Century Citadel, Fresco Gallery and Lion Platform',
     category: 'sightseeing'
   },
   {
-    id: 'item-2',
+    id: 'it-3',
     day: 1,
-    time: '11:30 AM',
-    title: 'Nishiki Market Tasting Tour',
+    time: '01:30 PM',
+    title: 'Traditional Rice & Curry Lunch in Habarana',
     duration: '1.5 hrs',
-    costUSD: 25,
-    note: '$25 Food Budget • Grilled seafood, sesame dango',
+    costUSD: 8,
+    note: 'Clay pot curries, organic garden vegetables and fresh king coconut',
     category: 'food'
   },
   {
-    id: 'item-3',
-    day: 1,
-    time: '05:00 PM',
-    title: 'Kiyomizu-dera Sunset Overlook',
-    duration: '2.0 hrs',
-    costUSD: 4,
-    note: '$4 Ticket • Golden Hour panoramic timber terrace',
-    category: 'sightseeing'
-  },
-  {
-    id: 'item-4',
+    id: 'it-4',
     day: 2,
     time: '08:30 AM',
-    title: 'Arashiyama Sagano Bamboo Path',
-    duration: '2.0 hrs',
-    costUSD: 0,
-    note: 'Free entry • Early morning rustling leaves',
-    category: 'sightseeing'
+    title: 'Scenic Hill Country Train from Kandy to Ella',
+    duration: '6.0 hrs',
+    costUSD: 12,
+    note: 'One of the most scenic railway journeys in the world through tea mountains',
+    category: 'transit'
   },
   {
-    id: 'item-5',
+    id: 'it-5',
     day: 2,
-    time: '01:00 PM',
-    title: 'Traditional Matcha Ceremony',
-    duration: '1.5 hrs',
-    costUSD: 30,
-    note: '$30 fee • Historic Uji green tea master',
-    category: 'activity'
-  }
-];
-
-export const MAP_POIS: MapPoi[] = [
-  {
-    id: 'poi-tokyo-station',
-    name: 'Tokyo Central Station',
-    city: 'Tokyo',
-    country: 'Japan',
-    coordinates: { x: 58, y: 48, lat: 35.6812, lng: 139.7671 },
-    category: 'Transit',
-    duration: '0.5 hrs',
-    costUSD: 0,
-    description: 'Iconic red-brick 1914 Marunouchi facade & Shinkansen hub.',
-    rating: 4.8
-  },
-  {
-    id: 'poi-ueno',
-    name: 'Ueno Cultural Park',
-    city: 'Tokyo',
-    country: 'Japan',
-    coordinates: { x: 62, y: 35, lat: 35.7140, lng: 139.7741 },
-    category: 'Nature',
-    duration: '2.0 hrs',
-    costUSD: 5,
-    description: 'Shinobazu Lotus Pond, Tokyo National Museum & cherry trees.',
-    rating: 4.7
-  },
-  {
-    id: 'poi-asakusa',
-    name: 'Senso-ji Temple & Kaminarimon',
-    city: 'Tokyo',
-    country: 'Japan',
-    coordinates: { x: 68, y: 38, lat: 35.7148, lng: 139.7967 },
-    category: 'Historic',
+    time: '04:30 PM',
+    title: 'Demodara Nine Arch Bridge Viaduct Walk',
     duration: '2.0 hrs',
     costUSD: 0,
-    description: 'Tokyo’s oldest Buddhist sanctuary with giant red paper lantern.',
-    rating: 4.9
-  },
-  {
-    id: 'poi-ginza',
-    name: 'Ginza Architectural District',
-    city: 'Tokyo',
-    country: 'Japan',
-    coordinates: { x: 57, y: 55, lat: 35.6719, lng: 139.7640 },
-    category: 'Food',
-    duration: '3.0 hrs',
-    costUSD: 45,
-    description: 'World-renowned patisseries, tea salons, and art galleries.',
-    rating: 4.6
-  },
-  {
-    id: 'poi-shibuya',
-    name: 'Shibuya Crossing & Sky Lookout',
-    city: 'Tokyo',
-    country: 'Japan',
-    coordinates: { x: 42, y: 58, lat: 35.6595, lng: 139.7005 },
-    category: 'Viewpoint',
-    duration: '1.5 hrs',
-    costUSD: 18,
-    description: '360° open-air rooftop observation deck overlooking Mt. Fuji.',
-    rating: 4.9
-  },
-  {
-    id: 'poi-kyoto-fushimi',
-    name: 'Fushimi Inari Taisha',
-    city: 'Kyoto',
-    country: 'Japan',
-    coordinates: { x: 48, y: 72, lat: 34.9671, lng: 135.7727 },
-    category: 'Historic',
-    duration: '2.5 hrs',
-    costUSD: 0,
-    description: 'Mountain trail adorned with thousands of vermilion torii gates.',
-    rating: 4.95
+    note: 'Watch the historic blue locomotive pass across the colonial bridge',
+    category: 'sightseeing'
   }
 ];
-
-export const CURRENCY_RATES: Record<string, { symbol: string; rate: number }> = {
-  USD: { symbol: '$', rate: 1.0 },
-  EUR: { symbol: '€', rate: 0.92 },
-  GBP: { symbol: '£', rate: 0.79 },
-  JPY: { symbol: '¥', rate: 151.5 },
-  AUD: { symbol: 'A$', rate: 1.54 }
-};

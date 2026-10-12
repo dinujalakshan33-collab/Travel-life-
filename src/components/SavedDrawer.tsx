@@ -1,7 +1,6 @@
 import React from 'react';
 import { Destination, Currency } from '../types/travel';
 import { X, Trash2, ArrowRight, Bookmark } from 'lucide-react';
-import { CURRENCY_RATES } from '../data/travelData';
 
 interface SavedDrawerProps {
   isOpen: boolean;
@@ -24,8 +23,16 @@ export const SavedDrawer: React.FC<SavedDrawerProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const rate = CURRENCY_RATES[currency]?.rate || 1.0;
-  const symbol = CURRENCY_RATES[currency]?.symbol || '$';
+  const rates: Record<Currency, { rate: number; sym: string }> = {
+    USD: { rate: 1, sym: '$' },
+    EUR: { rate: 0.92, sym: '€' },
+    GBP: { rate: 0.79, sym: '£' },
+    JPY: { rate: 154, sym: '¥' },
+    AUD: { rate: 1.52, sym: 'A$' }
+  };
+  const c = rates[currency] || rates.USD;
+  const rate = c.rate;
+  const symbol = c.sym;
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in">

@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { Destination, Currency } from '../types/travel';
-import { Star, Bookmark, ArrowRight } from 'lucide-react';
-import { CURRENCY_RATES } from '../data/travelData';
+import { 
+  Star, 
+  Heart, 
+  MapPin, 
+  Calendar, 
+  ArrowRight, 
+  SlidersHorizontal,
+  Compass,
+  Sparkles,
+  Layers
+} from 'lucide-react';
 
 interface FeaturedDestinationsProps {
   destinations: Destination[];
@@ -18,82 +27,121 @@ export const FeaturedDestinations: React.FC<FeaturedDestinationsProps> = ({
   onSelectDestination,
   currency
 }) => {
-  const [filterPill, setFilterPill] = useState<string>('All');
+  const [selectedFilter, setSelectedFilter] = useState<string>('All');
+  const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'price-asc' | 'price-desc'>('recommended');
 
   const filterOptions = [
     'All',
-    'Trending Now',
-    'Coastal & Beaches',
-    'Natural Wonders',
+    'Trending',
     'Historic Landmarks',
-    'Adventure & Hiking'
+    'Natural Wonders',
+    'Coastal & Beaches',
+    'Adventure & Hiking',
+    'Cities & Culture',
+    'Wildlife Sanctuaries'
   ];
 
-  const filtered = destinations.filter(dest => {
-    if (filterPill === 'All') return true;
-    if (filterPill === 'Trending Now') return dest.rating >= 4.9;
-    return dest.category === filterPill;
-  });
-
-  const getConvertedPrice = (usd: number) => {
-    const rate = CURRENCY_RATES[currency]?.rate || 1.0;
-    const symbol = CURRENCY_RATES[currency]?.symbol || '$';
-    return `${symbol}${Math.round(usd * rate)}`;
+  const formatPrice = (usd: number) => {
+    const rates: Record<Currency, { rate: number; sym: string }> = {
+      USD: { rate: 1, sym: '$' },
+      EUR: { rate: 0.92, sym: '€' },
+      GBP: { rate: 0.79, sym: '£' },
+      JPY: { rate: 154, sym: '¥' },
+      AUD: { rate: 1.52, sym: 'A$' }
+    };
+    const c = rates[currency] || rates.USD;
+    return `${c.sym}${Math.round(usd * c.rate).toLocaleString()}`;
   };
 
-  return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#eae5d8]">
-      {/* Header */}
-      <div className="mb-8">
-        <span className="block font-mono text-[10px] font-bold tracking-widest text-[#b83a14] uppercase mb-1.5">
-          CURATED GLOBAL HIGHLIGHTS
-        </span>
-        <h2 className="editorial-title text-3xl sm:text-4xl text-[#11382e] font-semibold tracking-tight">
-          Featured Destinations
-        </h2>
+  const filtered = destinations.filter(dest => {
+    if (selectedFilter === 'All') return true;
+    if (selectedFilter === 'Trending') return dest.trending || dest.rating >= 4.95;
+    return dest.category === selectedFilter;
+  });
 
-        {/* Filter Pills */}
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          {filterOptions.map(option => (
-            <button
-              key={option}
-              onClick={() => setFilterPill(option)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
-                filterPill === option
-                  ? 'bg-[#114b3e] text-white shadow-xs font-semibold'
-                  : 'bg-[#f0ece1] text-[#425850] hover:bg-[#e4decb]'
-              }`}
-            >
-              {option}
-            </button>
-          ))}
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === 'rating') return b.rating - a.rating;
+    if (sortBy === 'price-asc') return a.dailyCostUSD - b.dailyCostUSD;
+    if (sortBy === 'price-desc') return b.dailyCostUSD - a.dailyCostUSD;
+    return 0; // recommended order
+  });
+
+  return (
+    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto border-t border-[#ded8c7]">
+      
+      {/* Header & Controls */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-800 uppercase tracking-widest mb-1">
+            <Compass className="w-4 h-4 text-emerald-700" />
+            <span>Worldwide Destination Compendium</span>
+          </div>
+          <h2 className="editorial-title text-3xl sm:text-4xl font-bold text-[#11382e] tracking-tight">
+            Curated Global Destinations
+          </h2>
+          <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-xl">
+            Verified travel sanctuaries across Asia, Europe, the Americas, Africa, and Oceania. Precision cartography and seasonal travel guides.
+          </p>
+        </div>
+
+        {/* Sort Selector */}
+        <div className="flex items-center gap-2 self-start md:self-auto">
+          <span className="text-[11px] font-mono font-bold text-stone-400 uppercase">Sort By:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+            className="text-xs font-semibold bg-white border border-[#ded8c7] rounded-xl px-3 py-2 text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#114b3e] cursor-pointer"
+          >
+            <option value="recommended">Featured / Curated</option>
+            <option value="rating">Highest Traveler Rating</option>
+            <option value="price-asc">Budget: Low to High</option>
+            <option value="price-desc">Budget: High to Low</option>
+          </select>
         </div>
       </div>
 
-      {/* Grid of Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map(dest => {
+      {/* Category Segmented Buttons */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-8">
+        {filterOptions.map(option => (
+          <button
+            key={option}
+            onClick={() => setSelectedFilter(option)}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              selectedFilter === option
+                ? 'bg-[#11382e] text-white shadow-xs'
+                : 'text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+
+      {/* Destinations Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {sorted.map(dest => {
           const isSaved = savedIds.includes(dest.id);
 
           return (
             <div
               key={dest.id}
-              className="bg-white rounded-2xl overflow-hidden border border-[#ded8c7] shadow-sm hover:shadow-md transition-all duration-300 flex flex-col group"
+              onClick={() => onSelectDestination(dest)}
+              className="group bg-white rounded-3xl border border-[#ded8c7] overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
             >
-              {/* Image Section */}
-              <div className="relative h-52 sm:h-56 overflow-hidden bg-stone-100">
+              {/* Photo Banner */}
+              <div className="relative aspect-4/3 w-full overflow-hidden bg-stone-100">
                 <img
                   src={dest.imageUrl}
                   alt={dest.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
 
-                {/* Top Badge */}
+                {/* Top Category Badge */}
                 <div className="absolute top-3 left-3">
-                  <span className="bg-black/60 backdrop-blur-md text-white text-[9px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-md border border-white/20 uppercase flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-                    {dest.badge}
+                  <span className="bg-[#11382e]/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-xs">
+                    {dest.category}
                   </span>
                 </div>
 
@@ -103,72 +151,76 @@ export const FeaturedDestinations: React.FC<FeaturedDestinationsProps> = ({
                     e.stopPropagation();
                     onToggleSave(dest.id);
                   }}
-                  className={`absolute top-3 right-3 w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-colors cursor-pointer ${
-                    isSaved
-                      ? 'bg-[#114b3e] text-white border border-[#114b3e]'
-                      : 'bg-black/40 text-white/90 hover:bg-black/60 border border-white/20'
+                  className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                    isSaved ? 'bg-rose-50 text-rose-600' : 'bg-black/50 text-white hover:bg-black/80'
                   }`}
-                  title={isSaved ? 'Remove from saved' : 'Save destination'}
+                  aria-label="Save destination"
                 >
-                  <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'fill-current' : ''}`} />
+                  <Heart className={`w-4 h-4 ${isSaved ? 'fill-rose-600' : ''}`} />
                 </button>
-                {/* Bottom Location Tag on Image */}
-                {dest.locationTag && (
-                  <div className="absolute bottom-2.5 left-3">
-                    <span className="text-[10px] font-mono font-bold tracking-widest text-white/95 uppercase drop-shadow-md">
-                      {dest.locationTag}
-                    </span>
-                  </div>
-                )}
+
+                {/* Bottom Overlay: City & Country + Rating */}
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
+                  <span className="text-[11px] font-mono font-medium drop-shadow-sm flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-300" />
+                    <span>{dest.city}, {dest.country}</span>
+                  </span>
+                  <span className="flex items-center gap-1 bg-black/50 px-2 py-0.5 rounded-full text-[10px] font-bold backdrop-blur-xs">
+                    <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    <span>{dest.rating.toFixed(2)}</span>
+                  </span>
+                </div>
               </div>
 
-              {/* Content Section */}
+              {/* Card Body */}
               <div className="p-5 flex-1 flex flex-col justify-between">
                 <div>
-                  {/* Category & Rating */}
-                  <div className="flex items-center justify-between text-xs text-[#5c7068] mb-1.5">
-                    <span className="font-mono text-[11px] font-medium tracking-wide text-stone-600">
-                      {dest.categoryLabel}
-                    </span>
-                    <div className="flex items-center gap-1 text-[#b83a14] font-semibold text-xs">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      <span>{dest.rating === 4.9 ? '4.9' : dest.rating.toFixed(2)}</span>
-                      <span className="text-stone-500 font-normal">({dest.reviewsCount})</span>
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-[#11382e] tracking-tight group-hover:text-[#0c4034] transition-colors mb-2">
+                  <h3 className="font-bold text-base text-[#11382e] group-hover:text-emerald-800 transition-colors line-clamp-1 leading-snug">
                     {dest.name}
                   </h3>
-
-                  {/* Description */}
-                  <p className="text-xs text-[#52645d] leading-relaxed line-clamp-2 mb-4">
+                  
+                  <p className="text-xs text-stone-600 mt-2 line-clamp-2 leading-relaxed">
                     {dest.description}
                   </p>
+
+                  {/* Highlights or activities */}
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {dest.highlights.slice(0, 2).map((h, i) => (
+                      <span key={i} className="text-[10px] text-stone-600 bg-[#f7f5ed] border border-[#e8e4d8] px-2 py-0.5 rounded-md">
+                        {h}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Footer Meta & Explore */}
-                <div className="pt-3 border-t border-[#eae5d8] flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-[#465b53] font-mono text-[11px]">
-                    <span className="font-semibold text-stone-800">{dest.budgetTier}</span>
-                    <span className="text-stone-300">•</span>
-                    <span>{dest.duration}</span>
+                {/* Price, Season & Footer CTA */}
+                <div className="mt-5 pt-3.5 border-t border-[#ede8dc] flex items-center justify-between text-xs">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-stone-400 block uppercase">
+                      Daily Budget (Est.)
+                    </span>
+                    <span className="font-bold text-[#11382e] text-sm">
+                      {formatPrice(dest.dailyCostUSD)} <span className="text-[10px] font-normal text-stone-500">/ day</span>
+                    </span>
                   </div>
 
-                  <button
-                    onClick={() => onSelectDestination(dest)}
-                    className="flex items-center gap-1 bg-[#f4f1e8] hover:bg-[#eae4d6] text-[#11382e] font-semibold px-2.5 py-1 rounded-md text-xs transition-colors cursor-pointer group-hover:bg-[#114b3e] group-hover:text-white"
-                  >
-                    <span>Explore</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="text-right">
+                    <span className="text-[10px] font-mono font-bold text-stone-400 block uppercase">
+                      Best Visiting Time
+                    </span>
+                    <span className="font-semibold text-stone-700 text-[11px] flex items-center gap-1 justify-end">
+                      <Calendar className="w-3 h-3 text-emerald-700" />
+                      <span>{dest.bestSeason.split('/')[0].trim()}</span>
+                    </span>
+                  </div>
                 </div>
+
               </div>
             </div>
           );
         })}
       </div>
+
     </section>
   );
 };

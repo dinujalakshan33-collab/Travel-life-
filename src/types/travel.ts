@@ -1,31 +1,88 @@
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'JPY' | 'AUD';
 
+export type DestinationCategory = 
+  | 'Coastal & Beaches' 
+  | 'Natural Wonders' 
+  | 'Historic Landmarks' 
+  | 'Adventure & Hiking' 
+  | 'Cities & Culture' 
+  | 'Wildlife Sanctuaries';
+
+export type WorldRegion = 'Europe' | 'Asia' | 'Americas' | 'Africa' | 'Middle East' | 'Oceania';
+
+export type BudgetTier = '$ Budget-Friendly' | '$$ Mid-Range' | '$$$ Luxury' | '$$$$ Ultra-Luxury';
+
+export type AccommodationType = 
+  | 'Luxury Resort' 
+  | 'Beach Resort' 
+  | 'Boutique Stay' 
+  | 'Eco-Lodge' 
+  | 'Budget Hotel & Hostel';
+
 export interface Destination {
   id: string;
   name: string;
   country: string;
-  region: 'Europe' | 'Asia' | 'Americas' | 'Africa' | 'Oceania';
-  badge: string;
-  badgeType?: 'season' | 'gem' | 'wonder' | 'adventure' | 'romance' | 'food';
-  categoryLabel: string;
-  category: 'Coastal & Beaches' | 'Natural Wonders' | 'Historic Landmarks' | 'Adventure & Hiking' | 'Culinary & Cultural';
+  countryCode: string;
+  city: string;
+  region: WorldRegion;
+  category: DestinationCategory;
   rating: number;
   reviewsCount: string;
   description: string;
-  budgetTier: '$ Budget-Friendly' | '$$ Mid-Range' | '$$$ Luxury' | '$$$ Safari';
+  longDescription?: string;
+  bestSeason: string;
+  budgetTier: BudgetTier;
   dailyCostUSD: number;
-  duration: string;
   imageUrl: string;
-  locationTag?: string;
+  gallery: string[];
+  activities: string[];
   coordinates: { lat: number; lng: number };
-  elevation?: string;
-  bestMonths: string;
   highlights: string[];
-  dayByDaySample: {
+  recommendedStayDays: number;
+  featured?: boolean;
+  trending?: boolean;
+  // Backward compatibility
+  badge?: string;
+  categoryLabel?: string;
+  duration?: string;
+  bestMonths?: string;
+  dayByDaySample?: {
     day: number;
     title: string;
     items: string[];
   }[];
+}
+
+export interface HotelStay {
+  id: string;
+  name: string;
+  destinationId: string;
+  destinationName: string;
+  city: string;
+  country: string;
+  type: AccommodationType;
+  rating: number;
+  reviewsCount: string;
+  pricePerNightUSD: number;
+  priceRangeLabel: string;
+  imageUrl: string;
+  gallery: string[];
+  facilities: string[];
+  description: string;
+  bookingUrl: string;
+  coordinates: { lat: number; lng: number };
+  featured?: boolean;
+}
+
+export interface PopularCountry {
+  id: string;
+  name: string;
+  code: string;
+  region: WorldRegion;
+  tagline: string;
+  destinationCount: number;
+  imageUrl: string;
 }
 
 export interface ContinentSector {
@@ -56,13 +113,14 @@ export interface BudgetArchetype {
 export interface EditorialArticle {
   id: string;
   badge: string;
-  badgeColor: string;
+  badgeColor?: string;
   author: string;
   readTime: string;
   title: string;
   summary: string;
   seasonalWindow: string;
   imageUrl: string;
+  destinationRef?: string;
   fullContent?: string[];
   keyTakeaways?: string[];
 }
@@ -72,12 +130,15 @@ export interface MapPoi {
   name: string;
   city: string;
   country: string;
-  coordinates: { x: number; y: number; lat: number; lng: number }; // x,y are percentages for custom stylized canvas/map
-  category: 'Historic' | 'Nature' | 'Food' | 'Transit' | 'Viewpoint';
+  coordinates: { lat: number; lng: number; x?: number; y?: number };
+  category: 'Historic' | 'Nature' | 'Food' | 'Transit' | 'Viewpoint' | 'Hotel' | 'Beach';
   duration: string;
   costUSD: number;
   description: string;
   rating: number;
+  imageUrl?: string;
+  destinationId?: string;
+  hotelId?: string;
 }
 
 export interface ItineraryItem {
