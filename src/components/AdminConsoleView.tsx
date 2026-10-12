@@ -3,8 +3,9 @@ import {
   Shield, CheckCircle2, AlertTriangle, AlertCircle, RefreshCw, Download, 
   Plus, Search, Bell, User, ExternalLink, Check, X, ArrowRight, ArrowLeft, 
   MapPin, Globe, Database, Cpu, Radio, GitPullRequest, Eye, FileText, 
-  ChevronRight, Compass, Layers, Lock, Sparkles, Sliders
+  ChevronRight, Compass, Layers, Lock, Sparkles, Sliders, LogOut
 } from 'lucide-react';
+import { authApi, AuthUser } from '../services/authApi';
 
 export interface AuditCandidate {
   id: string;
@@ -132,9 +133,15 @@ const INITIAL_CANDIDATES: AuditCandidate[] = [
 
 interface AdminConsoleViewProps {
   onBackToMain: () => void;
+  currentUser?: AuthUser | null;
+  onLogout?: () => void;
 }
 
-export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain }) => {
+export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ 
+  onBackToMain,
+  currentUser,
+  onLogout 
+}) => {
   const [candidates, setCandidates] = useState<AuditCandidate[]>(INITIAL_CANDIDATES);
   const [activeCandidateId, setActiveCandidateId] = useState<string>('jiufen');
   const [activeTab, setActiveTab] = useState<'pending' | 'outdated' | 'community' | 'archive'>('pending');
@@ -159,9 +166,14 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleApprove = (id: string) => {
-    setCandidates(prev => prev.map(c => c.id === id ? { ...c, status: 'approved' } : c));
-    showToast(`Approved ${activeCandidate.name} and synced to live production database v4.0!`);
+  const handleApprove = async (id: string) => {
+    const res = await authApi.approveWaypoint(id, cartographerNote);
+    if (res.success) {
+      setCandidates(prev => prev.map(c => c.id === id ? { ...c, status: 'approved' } : c));
+      showToast(res.message || `Approved ${activeCandidate.name} and synced to live production database v4.0!`);
+    } else {
+      showToast(res.error || 'Server rejected approval. Admin authorization expired.');
+    }
   };
 
   const handleRequestRevision = (id: string) => {
@@ -169,13 +181,16 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
     showToast(`Requested revision for ${activeCandidate.name}. Notification sent to contributor.`);
   };
 
-  const handleRunAudit = () => {
+  const handleRunAudit = async () => {
     setAuditRunning(true);
     showToast('Running live OpenStreetMap Overpass & Nominatim spatial drift audit...');
-    setTimeout(() => {
-      setAuditRunning(false);
-      showToast('Audit complete: 14,198 nodes aligned. 1 minor drift flag resolved.');
-    }, 2000);
+    const auditRes = await authApi.triggerAudit();
+    setAuditRunning(false);
+    if (auditRes.success) {
+      showToast(auditRes.summary || 'Audit complete: 14,198 nodes aligned. 1 minor drift flag resolved.');
+    } else {
+      showToast(auditRes.error || 'Audit failed. Please re-authenticate.');
+    }
   };
 
   const handleExportSchema = () => {
@@ -284,24 +299,41 @@ export const AdminConsoleView: React.FC<AdminConsoleViewProps> = ({ onBackToMain
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500"></span>
             </button>
 
-            {/* Dr. Eleanor Vance User Profile */}
+            {/* Authorized Admin User Profile */}
             <div className="flex items-center gap-2.5 pl-2 border-l border-[#ded8c7]">
-              <div className="w-8 h-8 rounded-full bg-stone-800 text-white flex items-center justify-center font-bold text-xs ring-2 ring-emerald-600/30">
-                EV
+              <div className="w-8 h-8 rounded-full bg-[#11382e] text-white flex items-center justify-center font-bold text-xs ring-2 ring-emerald-500/40">
+                {currentUser?.email ? currentUser.email.slice(0, 2).toUpperCase() : 'AD'}
               </div>
               <div className="hidden md:block text-left text-xs leading-tight">
-                <span className="font-bold text-[#11382e] block">Dr. Eleanor Vance</span>
-                <span className="font-mono text-[10px] text-stone-500 block">Superadmin / Cartography Lead</span>
+                <span className="font-bold text-[#11382e] block truncate max-w-[160px]">
+                  {currentUser?.email || 'Authorized Administrator'}
+                </span>
+                <span className="font-mono text-[10px] text-emerald-800 font-semibold block flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Private Admin Session
+                </span>
               </div>
             </div>
+
+            {/* Sign Out Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="px-2.5 py-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-800 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Terminate administrator session"
+              >
+                <LogOut className="w-3.5 h-3.5 text-red-700" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </button>
+            )}
 
             {/* Return to Explorer Button */}
             <button
               onClick={onBackToMain}
-              className="ml-2 px-3 py-1.5 rounded-lg bg-[#11382e] hover:bg-[#0c2f27] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+              className="ml-1 px-3 py-1.5 rounded-lg bg-[#11382e] hover:bg-[#0c2f27] text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Exit Console</span>
+              <span className="hidden sm:inline">Public Site</span>
             </button>
           </div>
 

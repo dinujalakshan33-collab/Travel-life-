@@ -15,17 +15,24 @@ import { MapExplorerView } from './components/MapExplorerView';
 import { TripPlannerView } from './components/TripPlannerView';
 import { CuratedExpeditionsView } from './components/CuratedExpeditionsView';
 import { AdminConsoleView } from './components/AdminConsoleView';
+import { AdminLoginView } from './components/AdminLoginView';
 import { SavedDrawer } from './components/SavedDrawer';
 import { SignInModal } from './components/SignInModal';
 import { DESTINATIONS, INITIAL_ITINERARY_ITEMS, EDITORIAL_ARTICLES } from './data/travelData';
 import { Destination, Currency, EditorialArticle, ItineraryItem, MapPoi } from './types/travel';
-import { LayoutGrid, Layers, Shield, Compass, Sparkles } from 'lucide-react';
+import { LayoutGrid, Layers, Shield, Compass, Sparkles, Lock } from 'lucide-react';
+import { authApi, AuthUser } from './services/authApi';
 
 export default function App() {
   // Navigation & Screen view state: 'destinations' (Screen 1) | 'expeditions' (Screen 2) | 'admin' (Screen 3) | 'map' | 'planner'
   const [currentTab, setCurrentTab] = useState<string>('destinations');
   const [currency, setCurrency] = useState<Currency>('USD');
   
+  // Private Administrator Authentication State
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+  const [adminUser, setAdminUser] = useState<AuthUser | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+
   // Bookmarks / Saved
   const [savedIds, setSavedIds] = useState<string[]>(['kyoto', 'amalfi', 'fushimi-inari']);
   const [savedDrawerOpen, setSavedDrawerOpen] = useState(false);
@@ -49,6 +56,28 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentTab]);
+
+  // Check server-side admin session on load
+  useEffect(() => {
+    authApi.checkSession().then(res => {
+      setIsAdminAuthenticated(res.authenticated);
+      if (res.user) setAdminUser(res.user);
+      setAuthLoading(false);
+    });
+  }, []);
+
+  const handleAdminLoginSuccess = (user: AuthUser) => {
+    setIsAdminAuthenticated(true);
+    setAdminUser(user);
+    setCurrentTab('admin');
+  };
+
+  const handleAdminLogout = async () => {
+    await authApi.logout();
+    setIsAdminAuthenticated(false);
+    setAdminUser(null);
+    setCurrentTab('destinations');
+  };
 
   const toggleSave = (id: string) => {
     setSavedIds(prev => 
@@ -174,17 +203,28 @@ export default function App() {
           currentTab === 'admin' ? 'bg-white text-[#11382e] font-bold shadow-xs' : 'text-stone-200 hover:bg-white/10'
         }`}
       >
-        <Shield className="w-3.5 h-3.5 text-amber-300" />
-        <span>3. Cartography Ops</span>
+        <Lock className={`w-3.5 h-3.5 ${isAdminAuthenticated ? 'text-emerald-400' : 'text-amber-300'}`} />
+        <span>{isAdminAuthenticated ? '3. Admin Ops (Active)' : '3. Admin Login'}</span>
       </button>
     </div>
   );
 
-  // SCREEN 3: Cartography Ops Admin Console & Verification Portal
+  // SCREEN 3: Cartography Ops Private Admin Portal (Protected)
   if (currentTab === 'admin') {
     return (
       <div className="min-h-screen bg-[#f7f5ed] pb-16">
-        <AdminConsoleView onBackToMain={() => setCurrentTab('destinations')} />
+        {isAdminAuthenticated ? (
+          <AdminConsoleView
+            currentUser={adminUser}
+            onLogout={handleAdminLogout}
+            onBackToMain={() => setCurrentTab('destinations')}
+          />
+        ) : (
+          <AdminLoginView
+            onLoginSuccess={handleAdminLoginSuccess}
+            onBackToHome={() => setCurrentTab('destinations')}
+          />
+        )}
         <ScreenSwitcherDock />
       </div>
     );

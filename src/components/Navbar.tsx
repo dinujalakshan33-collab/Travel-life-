@@ -112,7 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   ? 'bg-[#103e33] text-white shadow-xs font-semibold'
                   : 'text-stone-700 hover:text-[#11382e] hover:bg-[#ede9dc]'
               }`}
-              title="Cartography Operations Admin Console"
+              title="Private Administrator Portal"
             >
               <Shield className="w-3.5 h-3.5 text-amber-600" />
               <span>Cartography Ops</span>
