@@ -1176,3 +1176,34 @@ export const INITIAL_ITINERARY_ITEMS: ItineraryItem[] = [
     category: 'sightseeing'
   }
 ];
+export const BUDGET_ARCHETYPES: BudgetArchetype[] = [
+{
+id: 'budget',
+name: 'Budget Traveler',
+description: 'Affordable stays, local food, and public transport.',
+dailyBudgetUSD: 40
+},
+{
+id: 'mid-range',
+name: 'Mid-Range Traveler',
+description: 'Comfortable hotels, local experiences, and convenient transport.',
+dailyBudgetUSD: 120
+},
+{
+id: 'luxury',
+name: 'Luxury Traveler',
+description: 'Premium hotels, fine dining, and private experiences.',
+dailyBudgetUSD: 300
+}
+];
+
+export const CURRENCY_RATES: Record<string, number> = {
+USD: 1,
+LKR: 300,
+EUR: 0.92,
+GBP: 0.79,
+INR: 83,
+JPY: 150,
+AUD: 1.52,
+CAD: 1.36
+};
