@@ -196,3 +196,96 @@ export const Hero: React.FC<HeroProps> = ({
     </section>
   );
 };
+// src/components/HeroSection.tsx
+import React, { useState } from "react";
+import { Search, Compass, MapPin } from "lucide-react";
+import { DESTINATIONS, Destination } from "../data/travelData";
+
+interface HeroProps {
+  onSearch: (query: string) => void;
+  onExploreClick: () => void;
+  onSelectQuickDest: (dest: Destination) => void;
+}
+
+export const HeroSection: React.FC<HeroProps> = ({
+  onSearch,
+  onExploreClick,
+  onSelectQuickDest,
+}) => {
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(searchInput);
+    onExploreClick();
+  };
+
+  return (
+    <section className="relative w-full min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950">
+      {/* Background imagery with ocean & sunset hues */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=85"
+          alt="Luxury ocean coastline and sunset"
+          className="w-full h-full object-cover opacity-60 scale-105 transition-transform duration-10000 hover:scale-100"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/40 to-slate-950/90" />
+      </div>
+
+      {/* Content wrapper */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white pt-16 pb-12">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-xs sm:text-sm font-semibold mb-6 tracking-wide shadow-sm">
+          <Compass className="w-4 h-4 animate-spin text-emerald-400" />
+          <span>Curated Global Journeys & Authentic Stays</span>
+        </div>
+
+        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-tight drop-shadow-sm">
+          Your World. <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-amber-200 bg-clip-text text-transparent">Your Journey.</span>
+        </h1>
+
+        <p className="text-base sm:text-xl text-slate-200/90 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+          Discover extraordinary places, unforgettable stays, and experiences around the globe.
+        </p>
+
+        {/* Global Search Bar */}
+        <form
+          onSubmit={handleSubmit}
+          className="max-w-3xl mx-auto bg-white/95 backdrop-blur-md p-2 rounded-2xl md:rounded-full shadow-2xl border border-white/20 flex flex-col md:flex-row items-center gap-2 text-slate-800"
+        >
+          <div className="flex items-center gap-3 w-full px-4 py-2">
+            <Search className="w-5 h-5 text-emerald-700 shrink-0" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search destinations, Sri Lanka, beaches, mountains..."
+              className="w-full bg-transparent text-sm md:text-base focus:outline-none placeholder:text-slate-400 text-slate-900"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-white text-sm font-bold rounded-xl md:rounded-full transition shadow-md whitespace-nowrap active:scale-95"
+          >
+            Explore Destinations
+          </button>
+        </form>
+
+        {/* Quick Highlights / Shortcuts */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-8 text-xs text-slate-300">
+          <span className="text-slate-400">Popular right now:</span>
+          {DESTINATIONS.slice(0, 4).map((d) => (
+            <button
+              key={d.id}
+              onClick={() => onSelectQuickDest(d)}
+              className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full border border-white/10 transition"
+            >
+              <MapPin className="w-3 h-3 text-emerald-400" />
+              <span>{d.title}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
