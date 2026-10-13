@@ -1,4 +1,5 @@
-bun run build
+bun add @supabase/supabase-js
+# or: npm install @supabase/supabase-jsbun run build
 # or: npm run build
 git add src/data/travelData.ts src/context/AuthContext.tsx src/components/ src/App.tsx vite.config.ts
 git commit -m "feat: upgrade Travel Life to premium platform with global maps and Sri Lanka spotlight"
