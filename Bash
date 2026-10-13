@@ -4,3 +4,7 @@ bun add @supabase/supabase-js
 git add src/data/travelData.ts src/context/AuthContext.tsx src/components/ src/App.tsx vite.config.ts
 git commit -m "feat: upgrade Travel Life to premium platform with global maps and Sri Lanka spotlight"
 git push origin main
+bun add @supabase/supabase-js
+git add .
+git commit -m "feat: complete production auth, signup modal, profile view, and supabase integration"
+git push origin main
