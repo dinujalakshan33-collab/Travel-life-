@@ -1,0 +1,2 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`:
+  - `__dirname` (vite.config.ts:11:27). Use `import.meta.dirname` instead
