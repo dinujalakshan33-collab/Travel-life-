@@ -20,10 +20,12 @@ import { AdminConsoleView } from './components/AdminConsoleView';
 import { AdminLoginView } from './components/AdminLoginView';
 import { SavedDrawer } from './components/SavedDrawer';
 import { SignInModal } from './components/SignInModal';
+import { UserProfileModal } from './components/UserProfileModal';
 import { DESTINATIONS, HOTELS, INITIAL_ITINERARY_ITEMS, EDITORIAL_ARTICLES } from './data/travelData';
 import { Destination, HotelStay, Currency, EditorialArticle, ItineraryItem, MapPoi } from './types/travel';
 import { LayoutGrid, Layers, Shield, Compass, Sparkles, Lock, BedDouble, Globe2, ArrowRight } from 'lucide-react';
 import { authApi, AuthUser } from './services/authApi';
+import { authService, UserProfile } from './services/supabase';
 
 export default function App() {
   // Navigation & Screen view state: 'destinations' | 'hotels' | 'expeditions' | 'admin' | 'map' | 'planner'
@@ -50,7 +52,12 @@ export default function App() {
   const [activeDestination, setActiveDestination] = useState<Destination | null>(null);
   const [activeHotel, setActiveHotel] = useState<HotelStay | null>(null);
   const [activeArticle, setActiveArticle] = useState<EditorialArticle | null>(null);
+  
+  // Supabase User Auth & Profile State
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => authService.getCurrentUser());
+  const [authModalMode, setAuthModalMode] = useState<'signup' | 'signin'>('signup');
   const [signInOpen, setSignInOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   // Itinerary items
   const [itineraryItems, setItineraryItems] = useState<ItineraryItem[]>(INITIAL_ITINERARY_ITEMS);
@@ -60,6 +67,14 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentTab]);
 
+  // Subscribe to Supabase / local auth state changes
+  useEffect(() => {
+    const unsubscribe = authService.onAuthStateChange((user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Check server-side admin session on load
   useEffect(() => {
     authApi.checkSession().then(res => {
@@ -68,6 +83,41 @@ export default function App() {
       setAuthLoading(false);
     });
   }, []);
+
+  const handleOpenSignIn = () => {
+    setAuthModalMode('signin');
+    setSignInOpen(true);
+  };
+
+  const handleOpenSignUp = () => {
+    setAuthModalMode('signup');
+    setSignInOpen(true);
+  };
+
+  const renderAuthModals = () => (
+    <>
+      <SignInModal
+        isOpen={signInOpen}
+        onClose={() => setSignInOpen(false)}
+        initialMode={authModalMode}
+        onSuccess={(u) => setCurrentUser(u)}
+      />
+      <UserProfileModal
+        isOpen={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        user={currentUser}
+        savedDestinations={savedDestinationsList}
+        onOpenSavedDrawer={() => setSavedDrawerOpen(true)}
+        onOpenTripPlanner={() => setCurrentTab('planner')}
+        onSelectDestination={(dest) => setActiveDestination(dest)}
+        onUserUpdate={(updated) => setCurrentUser(updated)}
+        onSignOut={async () => {
+          await authService.signOut();
+          setCurrentUser(null);
+        }}
+      />
+    </>
+  );
 
   const handleAdminLoginSuccess = (user: AuthUser) => {
     setIsAdminAuthenticated(true);
@@ -278,7 +328,10 @@ export default function App() {
             const el = document.getElementById('hero-search');
             el?.scrollIntoView({ behavior: 'smooth' });
           }}
-          onOpenSignIn={() => setSignInOpen(true)}
+          onOpenSignIn={handleOpenSignIn}
+          onOpenSignUp={handleOpenSignUp}
+          onOpenProfile={() => setProfileOpen(true)}
+          user={currentUser}
           onStartPlanning={() => setCurrentTab('planner')}
         />
 
@@ -314,10 +367,7 @@ export default function App() {
           }}
         />
 
-        <SignInModal
-          isOpen={signInOpen}
-          onClose={() => setSignInOpen(false)}
-        />
+        {renderAuthModals()}
 
         <ScreenSwitcherDock />
       </div>
@@ -339,7 +389,10 @@ export default function App() {
             const el = document.getElementById('hero-search');
             el?.scrollIntoView({ behavior: 'smooth' });
           }}
-          onOpenSignIn={() => setSignInOpen(true)}
+          onOpenSignIn={handleOpenSignIn}
+          onOpenSignUp={handleOpenSignUp}
+          onOpenProfile={() => setProfileOpen(true)}
+          user={currentUser}
           onStartPlanning={() => setCurrentTab('planner')}
         />
 
@@ -387,7 +440,7 @@ export default function App() {
           }}
         />
 
-        <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
+        {renderAuthModals()}
         <ScreenSwitcherDock />
       </div>
     );
@@ -438,7 +491,7 @@ export default function App() {
           }}
         />
 
-        <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
+        {renderAuthModals()}
         <ScreenSwitcherDock />
       </div>
     );
@@ -454,7 +507,7 @@ export default function App() {
           onBack={() => setCurrentTab('destinations')}
           currency={currency}
         />
-        <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
+        {renderAuthModals()}
         <ScreenSwitcherDock />
       </div>
     );
@@ -475,7 +528,10 @@ export default function App() {
           const el = document.getElementById('hero-search');
           el?.scrollIntoView({ behavior: 'smooth' });
         }}
-        onOpenSignIn={() => setSignInOpen(true)}
+        onOpenSignIn={handleOpenSignIn}
+        onOpenSignUp={handleOpenSignUp}
+        onOpenProfile={() => setProfileOpen(true)}
+        user={currentUser}
         onStartPlanning={() => setCurrentTab('planner')}
       />
 
@@ -628,10 +684,7 @@ export default function App() {
         }}
       />
 
-      <SignInModal
-        isOpen={signInOpen}
-        onClose={() => setSignInOpen(false)}
-      />
+      {renderAuthModals()}
 
       {/* Screen Switcher Floating Dock */}
       <ScreenSwitcherDock />

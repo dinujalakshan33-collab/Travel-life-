@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, Search, Bookmark, User, Menu, X, Globe, ArrowRight, ChevronDown, Bell, Shield, BedDouble } from 'lucide-react';
 import { Currency } from '../types/travel';
+import { UserProfile } from '../services/supabase';
 
 interface NavbarProps {
   currentTab: string;
@@ -11,6 +12,9 @@ interface NavbarProps {
   onOpenSaved: () => void;
   onOpenSearch: () => void;
   onOpenSignIn: () => void;
+  onOpenSignUp?: () => void;
+  onOpenProfile?: () => void;
+  user?: UserProfile | null;
   onStartPlanning: () => void;
 }
 
@@ -23,6 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSaved,
   onOpenSearch,
   onOpenSignIn,
+  onOpenSignUp,
+  onOpenProfile,
+  user,
   onStartPlanning
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -227,13 +234,38 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           </button>
 
-          {/* Sign In */}
-          <button
-            onClick={onOpenSignIn}
-            className="text-[#384a43] hover:text-[#11382e] font-semibold px-2 py-1 hover:underline transition-colors cursor-pointer"
-          >
-            Sign In
-          </button>
+          {/* Auth: User Profile or Sign In / Sign Up */}
+          {user ? (
+            <button
+              onClick={onOpenProfile}
+              className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-[#114b3e]/10 hover:bg-[#114b3e]/15 border border-[#114b3e]/20 transition-all cursor-pointer group"
+              title="View your TRW Explorer Profile"
+            >
+              <img
+                src={user.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}
+                alt={user.fullName}
+                className="w-6 h-6 rounded-full object-cover border border-[#114b3e]/30"
+              />
+              <span className="text-xs font-semibold text-[#11382e] max-w-[100px] truncate">
+                {user.fullName.split(' ')[0]}
+              </span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={onOpenSignIn}
+                className="text-[#384a43] hover:text-[#11382e] font-semibold px-2 py-1 hover:underline transition-colors cursor-pointer"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={onOpenSignUp || onOpenSignIn}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors shadow-xs cursor-pointer"
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
 
           {/* Start Planning CTA */}
           <button
@@ -241,15 +273,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="bg-[#103e33] hover:bg-[#0b2f26] text-white px-4 py-2 rounded-xl font-semibold text-xs tracking-wide transition-all shadow-xs hover:shadow active:scale-98 cursor-pointer flex items-center gap-1.5"
           >
             <span>Plan a Trip</span>
-          </button>
-
-          {/* Profile User Icon */}
-          <button
-            onClick={onOpenSignIn}
-            className="w-7 h-7 rounded-full border border-stone-300 hover:border-stone-400 flex items-center justify-center text-stone-600 hover:text-stone-900 transition-colors cursor-pointer"
-            title="Account Profile"
-          >
-            <User className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -355,12 +378,29 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {currencies.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            <button
-              onClick={() => { onOpenSignIn(); setMobileMenuOpen(false); }}
-              className="text-xs font-semibold text-[#114b3e]"
-            >
-              Sign In
-            </button>
+            {user ? (
+              <button
+                onClick={() => { onOpenProfile?.(); setMobileMenuOpen(false); }}
+                className="text-xs font-semibold text-[#114b3e] flex items-center gap-1.5 bg-emerald-50 px-2 py-1 rounded"
+              >
+                <span>{user.fullName.split(' ')[0]} (Profile)</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => { onOpenSignIn(); setMobileMenuOpen(false); }}
+                  className="text-xs font-semibold text-[#114b3e]"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => { (onOpenSignUp || onOpenSignIn)(); setMobileMenuOpen(false); }}
+                  className="text-xs font-semibold text-white bg-blue-600 px-2.5 py-1 rounded"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
           </div>
 
           <button

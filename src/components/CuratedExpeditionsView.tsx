@@ -707,6 +707,8 @@ export const CuratedExpeditionsView: React.FC<CuratedExpeditionsViewProps> = ({
                         id: item.id,
                         name: item.name,
                         country: item.country,
+                        countryCode: 'EXP',
+                        city: item.name,
                         region: item.region === 'Asia' ? 'Asia' : item.region === 'Europe' ? 'Europe' : item.region === 'Africa' ? 'Africa' : 'Americas',
                         badge: item.categoryTag,
                         categoryLabel: item.terrain,
@@ -714,13 +716,17 @@ export const CuratedExpeditionsView: React.FC<CuratedExpeditionsViewProps> = ({
                         rating: item.rating,
                         reviewsCount: item.reviewsCount,
                         description: item.description,
+                        bestSeason: item.seasonTag || 'Spring & Autumn',
                         budgetTier: '$$ Mid-Range',
                         dailyCostUSD: item.dailyCostUSD,
                         duration: item.durationTag,
                         imageUrl: item.imageUrl,
+                        gallery: [item.imageUrl],
+                        activities: ['Field exploration', 'Scenic photography', 'Cultural immersion'],
                         coordinates: { lat: item.coordinates.lat, lng: item.coordinates.lng },
                         bestMonths: item.seasonTag,
                         highlights: [item.stat1.value, item.stat2.value, item.stat3.value],
+                        recommendedStayDays: 4,
                         dayByDaySample: [
                           { day: 1, title: 'Arrival & Initial Survey', items: ['Morning waypoint arrival', 'Local guide orientation', 'Sunset lookout'] }
                         ]

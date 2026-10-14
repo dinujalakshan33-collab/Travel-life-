@@ -11,7 +11,9 @@ export interface AuthResponse {
   token?: string;
   code?: string;
   attemptsLeft?: number;
+  remainingSeconds?: number;
   lockoutRemainingMinutes?: number;
+  resetToken?: string;
 }
 
 export interface SessionResponse {
@@ -148,6 +150,32 @@ export const authApi = {
       return await res.json();
     } catch {
       return { success: false, error: 'Audit trigger failed' };
+    }
+  },
+
+  async forgotPassword(email: string): Promise<{ success: boolean; message?: string; error?: string; resetToken?: string }> {
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      return await res.json();
+    } catch {
+      return { success: false, error: 'Recovery request failed' };
+    }
+  },
+
+  async resetPassword(token: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, newPassword })
+      });
+      return await res.json();
+    } catch {
+      return { success: false, error: 'Password reset request failed' };
     }
   }
 };
