@@ -4,7 +4,16 @@ import { apiRouter } from '../server/routes';
 
 const app = express();
 
-app.use(express.json());
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+app.use(express.json({ limit: '2mb' }));
 app.use(cookieParser());
 
 // Mount the authentication and admin API routes

@@ -6,8 +6,17 @@ import {
   BudgetArchetype, 
   EditorialArticle, 
   MapPoi, 
-  ItineraryItem 
+  ItineraryItem,
+  Currency
 } from '../types/travel';
+
+export const CURRENCY_RATES: Record<Currency, { rate: number; symbol: string; name: string }> = {
+  USD: { rate: 1.0, symbol: '$', name: 'US Dollar' },
+  EUR: { rate: 0.92, symbol: '€', name: 'Euro' },
+  GBP: { rate: 0.79, symbol: '£', name: 'British Pound' },
+  JPY: { rate: 155.0, symbol: '¥', name: 'Japanese Yen' },
+  AUD: { rate: 1.52, symbol: 'A$', name: 'Australian Dollar' }
+};
 
 export const POPULAR_COUNTRIES: PopularCountry[] = [
   {
@@ -1177,422 +1186,126 @@ export const INITIAL_ITINERARY_ITEMS: ItineraryItem[] = [
   }
 ];
 export const BUDGET_ARCHETYPES: BudgetArchetype[] = [
-{
-id: 'budget',
-name: 'Budget Traveler',
-description: 'Affordable stays, local food, and public transport.',
-dailyBudgetUSD: 40
-},
-{
-id: 'mid-range',
-name: 'Mid-Range Traveler',
-description: 'Comfortable hotels, local experiences, and convenient transport.',
-dailyBudgetUSD: 120
-},
-{
-id: 'luxury',
-name: 'Luxury Traveler',
-description: 'Premium hotels, fine dining, and private experiences.',
-dailyBudgetUSD: 300
-}
-];
-
-export const CURRENCY_RATES: Record<string, number> = {
-USD: 1,
-LKR: 300,
-EUR: 0.92,
-GBP: 0.79,
-INR: 83,
-JPY: 150,
-AUD: 1.52,
-CAD: 1.36
-};
-// src/data/travelData.ts
-
-export interface CurrencyRate {
-  [code: string]: number;
-}
-
-export const CURRENCY_RATES: CurrencyRate = {
-  USD: 1.0,
-  EUR: 0.92,
-  GBP: 0.79,
-  LKR: 305.5,
-  INR: 83.2,
-  AUD: 1.52,
-  CAD: 1.37,
-  JPY: 154.5,
-  AED: 3.67,
-};
-
-export interface BudgetArchetype {
-  id: string;
-  name: string;
-  tier: "Backpacker" | "Comfort Explorer" | "Luxury Collector";
-  dailyCostUSD: number;
-  description: string;
-  stays: string;
-  food: string;
-  transit: string;
-  highlights: string[];
-}
-
-export const BUDGET_ARCHETYPES: BudgetArchetype[] = [
+  // Backpacker Tier
   {
-    id: "backpacker",
-    name: "Nomad / Backpacker",
-    tier: "Backpacker",
-    dailyCostUSD: 35,
-    description: "Authentic local immersion, budget hostels, public trains, and street food markets.",
-    stays: "Hostels, community homestays, eco-camps",
-    food: "Street food stalls, night markets, local cafeterias",
-    transit: "Local trains, shared buses, bicycle rentals",
-    highlights: ["Maximized travel duration", "Cultural grassroots exchange", "Low carbon footprint"]
+    id: 'arch-1',
+    tier: 'Backpacker',
+    name: 'Southeast Asia Backpacker',
+    regionLabel: 'ASIA / INDOCHINA',
+    dailySpendUSD: 32,
+    tagline: 'Street food night markets, shared dorm eco-hostels & local commuter trains.',
+    stays: { name: 'Hostel Dorm / Guesthouse', cost: 14 },
+    food: { name: 'Street Markets & Local Canteens', cost: 11 },
+    transit: { name: 'Local Buses & Scooters', cost: 7 },
+    recommendedDuration: '2–4 Weeks',
+    perks: ['Authentic street food', 'Social traveler network', 'Maximum geographic freedom']
   },
   {
-    id: "comfort",
-    name: "Comfort Explorer",
-    tier: "Comfort Explorer",
-    dailyCostUSD: 110,
-    description: "Boutique heritage villas, verified authentic dining, private intercity drivers, and guided tours.",
-    stays: "Boutique hotels, 3-4★ heritage stays, private apartments",
-    food: "Curated local eateries, coastal beach clubs, bistros",
-    transit: "Express trains, private airport transfers, domestic flights",
-    highlights: ["Optimal balance of comfort and culture", "Small-group excursions", "Flexibility"]
+    id: 'arch-2',
+    tier: 'Backpacker',
+    name: 'Andean Trail Wanderer',
+    regionLabel: 'AMERICAS / ANDES',
+    dailySpendUSD: 41,
+    tagline: 'Mountain huts, market set menus, and high-altitude public overland routes.',
+    stays: { name: 'Refugio & Family Posada', cost: 18 },
+    food: { name: 'Comida Corrida & Bakeries', cost: 14 },
+    transit: { name: 'Regional Colectivos', cost: 9 },
+    recommendedDuration: '10–21 Days',
+    perks: ['Direct trailhead access', 'Indigenous market immersion', 'Low equipment cost']
   },
   {
-    id: "luxury",
-    name: "Luxury Collector",
-    tier: "Luxury Collector",
-    dailyCostUSD: 380,
-    description: "5-star retreats, private chartered boats, secluded wellness spas, and bespoke dining.",
-    stays: "5★ resorts, private pool villas, historic palaces",
-    food: "Fine dining, Michelin-recognized menus, private chefs",
-    transit: "Private chauffeurs, sea plane, helicopter charters",
-    highlights: ["Exclusive VIP access", "Dedicated 24/7 concierge", "Total privacy"]
-  }
-];
-
-export interface Destination {
-  id: string;
-  title: string;
-  country: string;
-  continent: "Asia" | "Europe" | "Africa" | "Americas" | "Oceania";
-  category: "Beaches" | "Mountains" | "Wildlife" | "Culture" | "Hidden Gem";
-  tagline: string;
-  description: string;
-  image: string;
-  gallery: string[];
-  coordinates: [number, number]; // [lat, lng]
-  bestMonths: string;
-  estimatedDailyUSD: number;
-  safetyRating: number; // 1-5
-  topAttractions: string[];
-  localTips: string[];
-  isTrending?: boolean;
-  featuredInSriLanka?: boolean;
-}
-
-export const DESTINATIONS: Destination[] = [
-  // --- SRI LANKA SPOTLIGHT ---
-  {
-    id: "sigiriya",
-    title: "Sigiriya Ancient Citadel",
-    country: "Sri Lanka",
-    continent: "Asia",
-    category: "Culture",
-    tagline: "The monumental 5th-century palace in the sky",
-    description: "Rising 180 meters above emerald jungle plains, Sigiriya (Lion Rock) is a UNESCO World Heritage marvel featuring ancient frescoes, mirror walls, and landscaped water gardens built by King Kashyapa.",
-    image: "https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=1200&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=800&q=80"
-    ],
-    coordinates: [7.9570, 80.7603],
-    bestMonths: "December – April",
-    estimatedDailyUSD: 55,
-    safetyRating: 4.9,
-    topAttractions: ["Summit Palace Ruins", "Sigiriya Frescoes", "Pidurangala Rock Sunrise", "Royal Water Gardens"],
-    localTips: ["Climb at 6:30 AM before heat and tour crowds peak.", "Wear comfortable grip shoes; summit climb has over 1,200 steps."],
-    isTrending: true,
-    featuredInSriLanka: true
-  },
-  {
-    id: "ella",
-    title: "Ella & Highlands Cloud Forest",
-    country: "Sri Lanka",
-    continent: "Asia",
-    category: "Mountains",
-    tagline: "Rolling tea plantations, misty ravines, and historic railways",
-    description: "Nestled in Sri Lanka's central highlands, Ella is celebrated for the Nine Arches Viaduct, sweeping views from Little Adam's Peak, and the world's most scenic train ride winding through Ceylon tea estates.",
-    image: "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=800&q=80"
-    ],
-    coordinates: [6.8667, 81.0466],
-    bestMonths: "January – May, August",
-    estimatedDailyUSD: 45,
-    safetyRating: 4.8,
-    topAttractions: ["Demodara Nine Arches Bridge", "Little Adam's Peak", "Ravana Falls", "Halpewatte Tea Factory"],
-    localTips: ["Reserve observation-car train tickets from Kandy to Ella 30 days in advance.", "Visit Nine Arch Bridge at 9:15 AM or 11:45 AM for train crossings."],
-    isTrending: true,
-    featuredInSriLanka: true
-  },
-  {
-    id: "mirissa",
-    title: "Mirissa & Southern Coast",
-    country: "Sri Lanka",
-    continent: "Asia",
-    category: "Beaches",
-    tagline: "Golden crescent coves, palm bluffs, and blue whale migrations",
-    description: "A relaxed coastal haven with turquoise waters, fresh oceanfront seafood shacks, and deep-water oceanic trenches famous for resident Blue Whales and Spinner Dolphins.",
-    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=1200&q=80",
-    gallery: [
-      "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80"
-    ],
-    coordinates: [5.9482, 80.4716],
-    bestMonths: "November – April",
-    estimatedDailyUSD: 50,
-    safetyRating: 4.7,
-    topAttractions: ["Coconut Tree Hill", "Secret Beach Cove", "Whale Watching Safaris", "Weligama Surf Breaks"],
-    localTips: ["Choose whale watch operators verified by WDCS (Whale and Dolphin Conservation).", "Sunset at Coconut Tree Hill is unmatched."],
-    isTrending: false,
-    featuredInSriLanka: true
-  },
-  {
-    id: "yala",
-    title: "Yala National Park",
-    country: "Sri Lanka",
-    continent: "Asia",
-    category: "Wildlife",
-    tagline: "Highest recorded density of wild leopards on Earth",
-    description: "Spanning scrub plains, coastal lagoons, and rocky outcrops, Yala is Sri Lanka's premier wildlife sanctuary hosting leopards (*Panthera pardus kotiya*), sloth bears, Asian elephants, and saltwater crocodiles.",
-    image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [6.3686, 81.5204],
-    bestMonths: "February – July",
-    estimatedDailyUSD: 85,
-    safetyRating: 4.9,
-    topAttractions: ["Block 1 Safari Game Drive", "Kumbukkan Oya Riverbanks", "Patanangala Beach", "Birdwatching Lagoons"],
-    localTips: ["Book private dawn safaris starting at 5:30 AM at the Palatupana gate for the best big cat sightings."],
-    isTrending: true,
-    featuredInSriLanka: true
+    id: 'arch-3',
+    tier: 'Backpacker',
+    name: 'Balkan Coast Explorer',
+    regionLabel: 'EUROPE / BALKANS',
+    dailySpendUSD: 44,
+    tagline: 'Adriatic coastal buses, shared apartments, and rustic village tavernas.',
+    stays: { name: 'Boutique Hostel Pod', cost: 22 },
+    food: { name: 'Pekara Bakeries & Seafood', cost: 15 },
+    transit: { name: 'Intercity Coaches', cost: 7 },
+    recommendedDuration: '14–30 Days',
+    perks: ['Uncrowded pebble coves', 'Affordable Euro travel', 'UNESCO stone old towns']
   },
 
-  // --- GLOBAL DESTINATIONS ---
+  // Comfort Tier
   {
-    id: "santorini",
-    title: "Santorini Caldera",
-    country: "Greece",
-    continent: "Europe",
-    category: "Beaches",
-    tagline: "Whitewashed cycladic cliffside architecture over the Aegean",
-    description: "Famous for its volcanic caldera basin, blue-domed chapels, world-class sunsets in Oia, and rich Assyrtiko vineyards growing in volcanic soil.",
-    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [36.3932, 25.4615],
-    bestMonths: "April – June, September – October",
-    estimatedDailyUSD: 160,
-    safetyRating: 4.9,
-    topAttractions: ["Oia Sunset Lookout", "Fira to Oia Cliffside Hike", "Red Beach", "Akrotiri Minoan Ruins"],
-    localTips: ["Avoid cruise ship rush hours by exploring Oia before 10 AM.", "Book caldera dining reservations well in advance."],
-    isTrending: true
+    id: 'arch-4',
+    tier: 'Comfort',
+    name: 'Kyoto & Central Japan Heritage',
+    regionLabel: 'ASIA / HONSHU',
+    dailySpendUSD: 115,
+    tagline: 'Modern business hotels, JR rail passes, and izakaya dining with seasonal sake.',
+    stays: { name: 'Midscale Modern Hotel', cost: 65 },
+    food: { name: 'Ramen Counters & Izakayas', cost: 34 },
+    transit: { name: 'Shinkansen & Subway IC', cost: 16 },
+    recommendedDuration: '10–14 Days',
+    perks: ['Onsen public baths included', 'Luggage forward service compatible', 'Punctual high-speed transit']
   },
   {
-    id: "kyoto",
-    title: "Kyoto Historic District",
-    country: "Japan",
-    continent: "Asia",
-    category: "Culture",
-    tagline: "Ancient Zen gardens, bamboo groves, and thousand-torii gates",
-    description: "The cultural soul of Japan with over 2,000 Buddhist temples and Shinto shrines, traditional geisha quarters in Gion, and tranquil bamboo canopies in Arashiyama.",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [35.0116, 135.7681],
-    bestMonths: "March – May, October – November",
-    estimatedDailyUSD: 130,
-    safetyRating: 5.0,
-    topAttractions: ["Fushimi Inari Shrine", "Kinkaku-ji (Golden Pavilion)", "Arashiyama Bamboo Forest", "Gion Historic Alleyways"],
-    localTips: ["Fushimi Inari is open 24/7; hike after sunset for atmospheric lanterns and quiet trails."],
-    isTrending: true
+    id: 'arch-5',
+    tier: 'Comfort',
+    name: 'Mediterranean Coastal Roadtrip',
+    regionLabel: 'EUROPE / RIVIERA',
+    dailySpendUSD: 135,
+    tagline: 'Private boutique B&Bs, compact rental car, cliffside trattorias and espresso bars.',
+    stays: { name: 'Charming Seaside Posada', cost: 78 },
+    food: { name: 'Osterias & Fresh Pasta', cost: 38 },
+    transit: { name: 'Hybrid Compact Rental', cost: 19 },
+    recommendedDuration: '7–12 Days',
+    perks: ['Hidden cove accessibility', 'Scenic coastal driveways', 'Evening aperitivo culture']
   },
   {
-    id: "banff",
-    title: "Banff & Lake Louise",
-    country: "Canada",
-    continent: "Americas",
-    category: "Mountains",
-    tagline: "Glacial turquoise alpine lakes surrounded by the rugged Rockies",
-    description: "Canada's oldest national park showcasing glowing turquoise waters fed by melting glaciers, pine forests, hot springs, and wildlife including grizzlies and elk.",
-    image: "https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [51.1784, -115.5708],
-    bestMonths: "June – September (Hiking), December – March (Skiing)",
-    estimatedDailyUSD: 150,
-    safetyRating: 4.9,
-    topAttractions: ["Moraine Lake", "Lake Louise Teahouse Trail", "Banff Gondola", "Icefields Parkway"],
-    localTips: ["Moraine Lake is accessible only via Parks Canada shuttles or commercial operators; book reservations early."],
-    isTrending: false
+    id: 'arch-6',
+    tier: 'Comfort',
+    name: 'Costa Rican Eco-Explorer',
+    regionLabel: 'AMERICAS / CLOUD FOREST',
+    dailySpendUSD: 105,
+    tagline: 'Canopy eco-lodges, guided wildlife walks, and farm-to-table volcanic sodas.',
+    stays: { name: 'Rainforest Eco-Lodge', cost: 58 },
+    food: { name: 'Organic Casados & Fresh Fruit', cost: 28 },
+    transit: { name: 'Shared 4x4 Tourist Shuttles', cost: 19 },
+    recommendedDuration: '8–14 Days',
+    perks: ['Direct biodiversity guides', 'Thermal springs entry', 'Sustainable carbon offset']
   },
-  {
-    id: "serengeti",
-    title: "Serengeti National Park",
-    country: "Tanzania",
-    continent: "Africa",
-    category: "Wildlife",
-    tagline: "The epic Great Migration across infinite acacia plains",
-    description: "Witness 1.5 million wildebeest, zebras, and gazelles crossing the Mara River in search of rain, closely trailed by lions, leopards, and cheetahs.",
-    image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [-2.3333, 34.8333],
-    bestMonths: "June – October (River Crossings), January – March (Calving)",
-    estimatedDailyUSD: 280,
-    safetyRating: 4.6,
-    topAttractions: ["Mara River Crossings", "Seronera Lion Prides", "Hot Air Balloon Dawn Safari", "Ngorongoro Crater Crater Rim"],
-    localTips: ["Opt for mobile tented camps that follow migration herds throughout seasonal movements."],
-    isTrending: true
-  },
-  {
-    id: "amalfi",
-    title: "Amalfi Coast & Positano",
-    country: "Italy",
-    continent: "Europe",
-    category: "Beaches",
-    tagline: "Pastel cliff-hugging villages, lemon groves, and Tyrrhenian waters",
-    description: "A dramatic 50-kilometer stretch of coastline in southern Italy lined with sheer cliffs, pastel-hued villages, pebble coves, and scenic coastal hiking paths.",
-    image: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [40.6340, 14.6027],
-    bestMonths: "May – June, September",
-    estimatedDailyUSD: 190,
-    safetyRating: 4.8,
-    topAttractions: ["Path of the Gods (Sentiero degli Dei)", "Positano Spiaggia Grande", "Villa Cimbrone Gardens (Ravello)", "Capri Boat Excursions"],
-    localTips: ["Use passenger ferries instead of crowded coastal buses to avoid winding traffic and get panoramic ocean views."],
-    isTrending: false
-  },
-  {
-    id: "queenstown",
-    title: "Queenstown & Milford Sound",
-    country: "New Zealand",
-    continent: "Oceania",
-    category: "Mountains",
-    tagline: "The adventure capital flanked by Lake Wakatipu and glacial fiords",
-    description: "Set against the Remarkables mountain range, Queenstown is the gateway to Milford Sound's towering sea cliffs, waterfalls, hiking tracks, and alpine sports.",
-    image: "https://images.unsplash.com/photo-1507699622108-4be3abd695ad?auto=format&fit=crop&w=1200&q=80",
-    gallery: [],
-    coordinates: [-45.0312, 168.6626],
-    bestMonths: "December – February (Summer), June – August (Ski)",
-    estimatedDailyUSD: 140,
-    safetyRating: 5.0,
-    topAttractions: ["Milford Sound Cruise", "Routeburn Track", "Skyline Gondola & Luge", "Dart River Wilderness Jet"],
-    localTips: ["Take a scenic flight from Queenstown to Milford Sound for bird's-eye views of Southern Alps glaciers."],
-    isTrending: false
-  }
-];
 
-export interface Hotel {
-  id: string;
-  name: string;
-  destinationId: string;
-  locationName: string;
-  country: string;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  estimatedPriceUSD: number;
-  priceNote: "Estimated seasonal rate" | "Verified partner rate";
-  amenities: string[];
-  style: "Eco Sanctuary" | "Heritage Villa" | "Luxury Resort" | "Boutique Retreat";
-  bookingUrl: string;
-}
-
-export const HOTELS: Hotel[] = [
+  // Luxury Tier
   {
-    id: "hotel-sigiriya-water",
-    name: "Water Garden Sigiriya",
-    destinationId: "sigiriya",
-    locationName: "Sigiriya",
-    country: "Sri Lanka",
-    image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-    rating: 4.9,
-    reviewCount: 340,
-    estimatedPriceUSD: 240,
-    priceNote: "Estimated seasonal rate",
-    amenities: ["Private Plunge Pools", "Ayurvedic Spa", "Citadel View", "Organic Dining"],
-    style: "Eco Sanctuary",
-    bookingUrl: "https://www.google.com/travel/hotels"
+    id: 'arch-7',
+    tier: 'Luxury',
+    name: 'Swiss Alpine Panorama & Palace',
+    regionLabel: 'EUROPE / ALPS',
+    dailySpendUSD: 460,
+    tagline: '5-star heritage spa grand hotels, 1st class panoramic trains & Michelin alpine dining.',
+    stays: { name: 'Grand Spa & Alpine Suite', cost: 280 },
+    food: { name: 'Gourmet Degustation & Wine', cost: 125 },
+    transit: { name: '1st Class Glacier Express & Heli', cost: 55 },
+    recommendedDuration: '5–10 Days',
+    perks: ['Thermal mineral springs', 'Matterhorn view balconies', 'Private mountain guides']
   },
   {
-    id: "hotel-ella-resort",
-    name: "98 Acres Resort & Spa",
-    destinationId: "ella",
-    locationName: "Ella Central Highlands",
-    country: "Sri Lanka",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
-    rating: 4.8,
-    reviewCount: 520,
-    estimatedPriceUSD: 180,
-    priceNote: "Estimated seasonal rate",
-    amenities: ["Tea Estate Chalets", "Infinity Pool", "Helipad", "Little Adam's Peak Access"],
-    style: "Boutique Retreat",
-    bookingUrl: "https://www.google.com/travel/hotels"
+    id: 'arch-8',
+    tier: 'Luxury',
+    name: 'Maldives Overwater Sanctuary',
+    regionLabel: 'ASIA / INDIAN OCEAN',
+    dailySpendUSD: 590,
+    tagline: 'Private lagoon villa with pool, seaplane transfers & private sandbank reef charters.',
+    stays: { name: 'Lagoon Overwater Pool Villa', cost: 380 },
+    food: { name: 'Underwater Restaurant Dining', cost: 140 },
+    transit: { name: 'Twin Otter Seaplane & Yacht', cost: 70 },
+    recommendedDuration: '5–8 Days',
+    perks: ['Dedicated private Thakuru butler', 'Bioluminescent reef dives', 'Sunset catamaran excursions']
   },
   {
-    id: "hotel-santorini-caves",
-    name: "Canaves Oia Suites",
-    destinationId: "santorini",
-    locationName: "Oia, Santorini",
-    country: "Greece",
-    image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=800&q=80",
-    rating: 4.9,
-    reviewCount: 410,
-    estimatedPriceUSD: 450,
-    priceNote: "Estimated seasonal rate",
-    amenities: ["Caldera Infinity Pool", "Wine Cellar", "Cave Spa", "Private Catamaran"],
-    style: "Luxury Resort",
-    bookingUrl: "https://www.google.com/travel/hotels"
-  },
-  {
-    id: "hotel-kyoto-ryokan",
-    name: "Hoshinoya Kyoto",
-    destinationId: "kyoto",
-    locationName: "Arashiyama, Kyoto",
-    country: "Japan",
-    image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80",
-    rating: 4.9,
-    reviewCount: 280,
-    estimatedPriceUSD: 390,
-    priceNote: "Estimated seasonal rate",
-    amenities: ["Boat Arrival Experience", "Kaiseki Dinners", "Zen Garden", "Tea Ceremonies"],
-    style: "Heritage Villa",
-    bookingUrl: "https://www.google.com/travel/hotels"
-  }
-];
-
-export interface Itinerary {
-  id: string;
-  destinationId: string;
-  title: string;
-  durationDays: number;
-  highlightRoute: string;
-  dailyBreakdown: { day: number; title: string; desc: string }[];
-}
-
-export const ITINERARIES: Itinerary[] = [
-  {
-    id: "itin-srilanka-classic",
-    destinationId: "sigiriya",
-    title: "The Golden Ring: Sigiriya, Highlands & Wild Coast",
-    durationDays: 7,
-    highlightRoute: "Colombo → Cultural Triangle → Ella → Yala → Mirissa",
-    dailyBreakdown: [
-      { day: 1, title: "Arrival in Negombo", desc: "Acclimate along palm canals and coastal lagoon." },
-      { day: 2, title: "Sigiriya Lion Rock & Minneriya Safari", desc: "Climb the 5th-century citadel and view wild elephant gatherings." },
-      { day: 3, title: "Kandy Sacred Relic & Tea Slopes", desc: "Visit Temple of the Tooth and enter the misty central mountains." },
-      { day: 4, title: "Ella Scenic Train Journey", desc: "Ride through cloud forests over the Nine Arches Viaduct." },
-      { day: 5, title: "Yala Big Cat Safari", desc: "Dawn safari in search of leopards and sloth bears." },
-      { day: 6, title: "Mirissa Coastal Relaxation", desc: "Coconut Tree Hill, calm bay swimming, and fresh coastal dining." },
-      { day: 7, title: "Galle Fort Heritage & Departure", desc: "Walk 17th-century ramparts and ocean bastions." }
-    ]
+    id: 'arch-9',
+    tier: 'Luxury',
+    name: 'Serengeti Migration Fly-In Camp',
+    regionLabel: 'AFRICA / SAVANNAH',
+    dailySpendUSD: 620,
+    tagline: 'Luxury canvas tented suites, private Land Cruiser safaris & bush champagne breakfasts.',
+    stays: { name: 'Private Luxury Tented Suite', cost: 410 },
+    food: { name: 'Sommelier Bush Dinners', cost: 130 },
+    transit: { name: 'Bush Plane & Custom Safari 4x4', cost: 80 },
+    recommendedDuration: '6–9 Days',
+    perks: ['Private wildlife spotter & guide', 'Hot air balloon safari', 'All-inclusive premium cellar']
   }
 ];
